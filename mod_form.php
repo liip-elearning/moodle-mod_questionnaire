@@ -162,8 +162,10 @@ class mod_questionnaire_mod_form extends moodleform_mod {
         }
     }
 
-    function validation($data, $files){
-        return parent::validation($data, $files);
-    }
 
+public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        return $errors;
+    }
+    
 }

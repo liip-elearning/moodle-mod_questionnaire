@@ -62,7 +62,7 @@
     if (!$questionnaire->capabilities->editquestions) {
         print_error('nopermissions', 'error','mod:questionnaire:edit');
     }
-
+    $SESSION->questionnaire = new stdClass();
     $SESSION->questionnaire->current_tab = 'questions';
     $reload = false;
 
@@ -113,6 +113,7 @@
                         $DB->set_field('questionnaire_question', 'position', $record->position-1, array('id' => $record->id));
                     }
                 }
+                check_dependencies ($questionnaire->id);
                 $reload = true;
             } else if (isset($qformdata->editbutton)) {
                 /// Switch to edit question screen.
@@ -152,7 +153,8 @@
                           array('survey_id' => $questionnaire->sid, 'position' => ($questionnaire->questions[$qid]->position-1)));
                 $DB->set_field('questionnaire_question', 'position', ($questionnaire->questions[$qid]->position-1),
                           array('id' => $qid));
-                /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...
+                check_dependencies ($questionnaire->id); // JR skip logic feature
+                /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...                
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
             } else if (isset($qformdata->movednbutton)) {
@@ -164,6 +166,8 @@
                                 'deleted' => 'n'));
                 $DB->set_field('questionnaire_question', 'position', ($questionnaire->questions[$qid]->position+1),
                                array('id' => $qid));
+
+                check_dependencies ($questionnaire->id); // JR skip logic feature
                 /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
@@ -177,6 +181,7 @@
             /// value in the <input> tag.
                 $qpos = key($qformdata->moveherebutton);
                 $questionnaire->move_question($qformdata->moveq, $qpos);
+                check_dependencies ($questionnaire->id);
                 /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
@@ -221,6 +226,7 @@
                         $curpos++;
                     }
                 }
+                check_dependencies ($questionnaire->id);
                 /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
@@ -319,7 +325,12 @@
                     $qformdata->precise = max($qformdata->length, $qformdata->precise);
                 }
             }
-
+            // TODO dependency JR
+            if (isset($qformdata->dependquestion) && $qformdata->dependquestion != 0) {
+                $dependency = explode(",",$qformdata->dependquestion);
+                $qformdata->dependquestion = $dependency[0];
+                $qformdata->dependchoice = $dependency[1];
+            }
             if (!empty($qformdata->qid)) {
                 /// Update existing question:
 
@@ -330,7 +341,7 @@
                 $qformdata->content = file_save_draft_area_files($qformdata->itemid, $context->id, 'mod_questionnaire', 'question',
                                                                  $qformdata->qid, array('subdirs'=>true), $qformdata->content);
 
-                $fields = array('name','type_id','length','precise','required','content');
+                $fields = array('name','type_id','length','precise','required','content','dependquestion','dependchoice');
                 $question_record = new Object();
                 $question_record->id = $qformdata->qid;
                 foreach($fields as $f) {
@@ -351,7 +362,7 @@
 
                 /// Need to update any image content after the question is created, so create then update the content.
                 $qformdata->survey_id = $qformdata->sid;
-                $fields = array('survey_id','name','type_id','length','precise','required','position');
+                $fields = array('survey_id','name','type_id','length','precise','required','position','dependquestion','dependchoice');
                 $question_record = new Object();
                 foreach($fields as $f) {
                     if(isset($qformdata->$f)) {
@@ -389,6 +400,14 @@
                     if ($newchoices[$nidx] != $echoice->content) {
                         $newchoices[$nidx] = trim ($newchoices[$nidx]);
                         $result = $DB->set_field('questionnaire_quest_choice', 'content', $newchoices[$nidx], array('id' => $ekey));
+                        $r = preg_match_all("/^(\d{1,2})(=.*)$/", $newchoices[$nidx], $matches);
+                        // this choice has been attributed a "score value"
+                        if ($r) {
+                        	$new_score = $matches[1][0];
+                        	$result = $DB->set_field('questionnaire_quest_choice', 'value', $new_score, array('id' => $ekey));
+                        } else { // no score value for this choice
+                            $result = $DB->set_field('questionnaire_quest_choice', 'value', 'NULL', array('id' => $ekey));
+                        }
                     }
                     $nidx++;
                     $echoice = next($question->choices);
@@ -401,6 +420,14 @@
                    $choice_record = new Object();
                    $choice_record->question_id = $qformdata->qid;
                    $choice_record->content = trim($newchoices[$nidx]);
+
+                   // JR added APRIL 2012 for personality test feature
+                   // get potential choice value from initial number followed by = sign
+                   $r = preg_match_all("/^(\d{1,2})(=.*)$/", $choice_record->content, $matches);
+                   if ($r) {
+                   	$choice_record->value = $matches[1][0];
+                   }
+                   //
                    $result = $DB->insert_record('questionnaire_quest_choice', $choice_record);
                    $nidx++;
                 }

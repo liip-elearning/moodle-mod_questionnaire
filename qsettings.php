@@ -60,10 +60,8 @@
     $currentinfo = file_prepare_draft_area($draftid_editor, $context->id, 'mod_questionnaire', 'info', $sdata->sid, array('subdirs'=>true), $questionnaire->survey->info);
     $sdata->info = array('text' => $currentinfo, 'format' => FORMAT_HTML, 'itemid'=>$draftid_editor);
 
-    $draftid_editor = file_get_submitted_draft_itemid('thankbody');
-    $currentinfo = file_prepare_draft_area($draftid_editor, $context->id, 'mod_questionnaire', 'thankbody', $sdata->sid, array('subdirs'=>true), $questionnaire->survey->thank_body);
-    $sdata->thank_body = array('text' => $currentinfo, 'format' => FORMAT_HTML, 'itemid'=>$draftid_editor);
-
+    $sdata->thank_body = $questionnaire->survey->thank_body; 
+    
     $settings_form->set_data($sdata);
 
     if ($settings = $settings_form->get_data()) {
@@ -80,16 +78,16 @@
         $sdata->info       = file_save_draft_area_files($sdata->infoitemid, $context->id, 'mod_questionnaire', 'info',
                                                         $sdata->id, array('subdirs'=>true), $sdata->info);
 
-        $sdata->theme = ''; // deprecated theme field
+        $sdata->theme = $settings->theme; // deprecated theme field TODO JR now used to store data analysis type
         $sdata->thanks_page = $settings->thanks_page;
         $sdata->thank_head = $settings->thank_head;
 
-        $sdata->thankitemid = $settings->thank_body['itemid'];
+        /* $sdata->thankitemid = $settings->thank_body['itemid'];
         $sdata->thankformat = $settings->thank_body['format'];
         $sdata->thank_body  = $settings->thank_body['text'];
         $sdata->thank_body  = file_save_draft_area_files($sdata->thankitemid, $context->id, 'mod_questionnaire', 'thankbody',
-                                                         $sdata->id, array('subdirs'=>true), $sdata->thank_body);
-
+                                                         $sdata->id, array('subdirs'=>true), $sdata->thank_body); */
+        $sdata->thank_body = $settings->thank_body;
         $sdata->email = $settings->email;
         $sdata->owner = $settings->owner;
         if (!($sid = $questionnaire->survey_update($sdata))) {

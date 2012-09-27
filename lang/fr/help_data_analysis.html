@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Questionnaire New Features HELP</title>
+<style type="text/css">
+<!--
+.questiontable {
+	border-collapse:collapse;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+.questiontable td{
+	border:#999999 thin dashed;
+	padding:5px;
+}
+-->
+</style>
+</head>
+
+<body style=" font-family:Verdana, Arial, Helvetica, sans-serif; font-size:small;">
+<h3>La fonction Analyse de donn&eacute;es</h3>
+<h4>Exemple n&deg; 1 : Test de personnalit&eacute; </h4>
+<h5> Questionnaire d'exemple : <em>D&eacute;partement des ressources humaines</em> </h5>
+<ol>
+  <li>Cr&eacute;ez votre questionnaire comme d'habitude. </li>
+  <li>Cliquez sur l'onglet  <strong>R&eacute;glages avanc&eacute;s</strong>.</li>
+  <li>Dans les Options d'envoi, <em>Analyse de donn&eacute;es</em>, s&eacute;lectionnez <strong>Score Total </strong> dans la liste d&eacute;roulante. Enregistrez les param&egrave;tres. </li>
+  <li>Commencez &agrave; cr&eacute;er vos questions. Dans la liste d&eacute;roulante
+    <em>Ajouter une question de ce type</em>, 
+    vous remarquerez que la liste des types de questions disponibles a &eacute;t&eacute; r&eacute;duite &agrave; 4&nbsp;:
+    <ol style="list-style: circle">
+      <li>Boutons radio</li>
+      <li>Description</li>
+      <li>&Eacute;chelle de Likert </li>
+      <li>Liste d&eacute;roulante<br />
+      La fonction Analyse de donn&eacute;es ne peut s'appliquer qu'&agrave; des quesitons &agrave; choix multiple et &agrave; r&eacute;ponse unique comme les boutons radio ou la Liste d&eacute;roulante, ainsi qu'au type Echelle de Likert. </li>
+    </ol>
+  </li>
+  <li>Pour chaque R&eacute;ponse possible, vous devez fournir une valeur (un &quot;score&quot;)  comme dans l'exemple ci-dessous&nbsp;: <br />
+    <table  class="questiontable">
+      <tr>
+        <td valign="top"><em>Texte </em></td>
+        <td>Quand vous sentez-vous au mieux de votre forme? </td>
+      </tr>
+      <tr>
+        <td valign="top"><em>R&eacute;ponses possibles </em></td>
+        <td>2=Le matin <br />
+4=L'apr&egrave;s-midi ou en d&eacute;but de soir&eacute;e <br />
+6=Tard le soir </td>
+      </tr>
+    </table>
+  Les valeurs acceptables sont des nombres entiers, y compris le 0 et jusqu'&agrave; 99. Chaque R&eacute;ponse possible doit commencer par une valeur, imm&eacute;diatement suivie du signe &eacute;gal (=), imm&eacute;diatement suivi du texte de la R&eacute;ponse possible. Les valeurs correspondant aux choix du r&eacute;pondant seront additionn&eacute;es pour obtenir son &quot;score total&quot; au questionnaire. </li>
+  <li>Pour les questions o&ugrave; les r&eacute;ponses possibles peuvent &ecirc;tre dispos&eacute;es le long d'une &eacute;chelle gradu&eacute;e, utilisez une question de type &Eacute;chelle de Likert plut&ocirc;t que de type Bouton radio. Par exemple (dans le Questionnaire <em>Pretest for Attitudes Toward Computers in Healthcare</em>&nbsp;:<br />
+      <table class="questiontable">
+        <tr>
+          <td><em>Texte de la question </em></td>
+          <td>The computer is a powerful enabling tool.</td>
+        </tr>
+        <tr>
+          <td valign="top"><em>R&eacute;ponses possibles </em></td>
+          <td>4=Agree Strongly<br />
+3=Agree<br />
+2=Not certain<br />
+1=Disagree<br />
+0=Disagree Strongly </td>
+        </tr>
+      </table>
+  </li>
+  <li>Vous <em>pouvez</em> m&eacute;langer des questions de diff&eacute;rents types &agrave; l'int&eacute;rieur d'un m&ecirc;me questionnaire, mais ce n'est pas recommand&eacute;. </li>
+  <li>  Lorsque vous avez fini de cr&eacute;er vos questions, retournez sur l'onglet <strong>R&eacute;glages avanc&eacute;s</strong> pour &eacute;diter le <strong>Titre</strong> et le <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong>. Le Titre sera affich&eacute; en haut des r&eacute;ponses du r&eacute;pondant. R&eacute;digez un titre descriptif bref. </li>
+  <li>Dans le champ du <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong> vous entrerez les divers Calculs, Conditions et Messages &agrave; afficher pour le R&eacute;pondant. Veillez &agrave; suivre tr&egrave;s attentivement les r&egrave;gles expos&eacute;es dans les exemples ci-dessous pour &eacute;viter l'affichage de messages d'errreur&nbsp;! </li>
+  <li>Dans le mode <strong>Score Total</strong> de l'Analyse de donn&eacute;es, vous n'avez besoin d'entrer aucune forumle de calcul&nbsp;: le score total maximum ainsi que le score obtenu par le r&eacute;pondant seront calcul&eacute;s automatiquement. Les trois variables suivantes sont &agrave; votre disposition pour les Conditions et les Messages&nbsp;:  $totalscore, $maxtotalscore et $totalscorepercent. Examinons le d&eacute;but du champ du <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong> de notre questionnaire d'exemple. <br />
+  
+    <table width="100%" height="210"  style="border:#999999 thin dashed; margin-top:5px; margin-bottom:5px;">
+      <tr>
+        <td valign="top">ligne</td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">1</td>
+        <td>Vous avez obtenu $totalscorepercent%.</td>
+      </tr>
+      <tr>
+        <td valign="top">2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">3</td>
+        <td> if ($totalscore &gt; 60)</td>
+      </tr>
+      <tr>
+        <td valign="top">4</td>
+        <td>Les autres vous consid&egrave;rent comme une personne &quot;&agrave; manier avec pr&eacute;caution&quot;. Vous donnez l'impression de quelqu'un de vaniteux, &eacute;gocentrique et extr&ecirc;mement dominant. Les autres peuvent vous admirer et souhaiter vous ressembler, mais ils ne vous font pas confiance et h&eacute;sitent &agrave; avoir des relations trop pouss&eacute;es avec vous. </td>
+      </tr>
+      <tr>
+        <td valign="top">5</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">6</td>
+        <td>if ($totalscore &lt; 61 and $totalscore &gt; 50)</td>
+      </tr>
+      <tr>
+        <td valign="top">7</td>
+        <td><p>Les autres vous consid&egrave;rent comme quelqu'un qui a une personnalit&eacute; excitante et plut&ocirc;t impulsive&nbsp;; un leader naturel, prompt &agrave; prendre des d&eacute;cisions, mais pas toujours les bonnes. Ils vous voient comme quelqu'un de courageux et aventureux, pr&ecirc;t &agrave; tout tenter&nbsp;; quelqu'un qui prend des risques et aime l'aventure. Ils appr&eacute;cient votre compagnie pour l'excitation qu'elle procure. </p>        </td>
+      </tr>
+    </table>
+  </li>
+  <li>Description de ces lignes d'exemple.
+    <ol style="list-style:lower-alpha">
+      <li>La formulation de la ligne 1 est totalement libre. En g&eacute;n&eacute;ral vous utiiliserez cette ligne 1 pour y afficher le score total obtenu par le repondant. La variable $totalscorepercent est un nombre entier (arrondi) auquel vous devrez ajouter le signe % si vous voulez l'afficher. Sur cette ligne 1 vous auriez par exemple pu &eacute;crire&nbsp;: &quot;Vous avez obtenu   $totalscore sur $maxtotalscore&quot;.</li>
+      <li>Le champ du <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong> est de type &quot;&eacute;diteur de texte simple&quot;, sans aucun menu de formatage de texte. Si vous savez ce que vous faites, vous pouvez utiliser les balises HTML pour formater votre texte&nbsp;: &lt;em&gt;&lt;/em&gt;  pour les italiques, etc. Mais n'en abusez pas. </li>
+      <li><strong>TRES IMPORTANT&nbsp;!</strong> Lorsque vous r&eacute;digez le contenu du champ du <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong> faites tr&egrave;s attention de ne pas introduire de sauts de ligne &agrave; l'int&eacute;rieur des &quot;lignes&quot; du champ. Dans cette description du contenu de ce champ, nous supposons qu'une &quot;ligne&quot; est une suite continue de caract&egrave;res et de mots, <em>qui ne contient aucun saut de ligne</em>. Bien entendu, une ligne de texte un peu longue sautera &agrave; la ligne automatiquement, mais il ne s'agira quand m&ecirc;me toujours que d'une &quot;ligne&quot; unique. </li>
+      <li>La ligne 2 doit rester vide (saut de ligne). </li>
+      <li>Lines 3, 6, 9, 12, etc. contain a condition formula, which conditions the display of the message on the following lines (4, 7, 10,...). The condition formulas available to you are restricted to 2 variables ($totalscore and $totalscorepercent) and 4 comparison operators:
+        <br />
+        Les lignes 
+        3, 6, 9, 12, etc. contiennent une formule conditonnelle, qui conditionne l'affichage du message des lignes qui suivent (4, 7, 10,...). 
+        Les formules conditionnelles que vous pouvez utiliser se limitent &agrave; 2 variables ($totalscore et $totalscorepercent) et 4 op&eacute;rateurs de comparaison&nbsp;:
+        <ol>
+          <li> <strong>&gt;</strong> Plus grand que	</li>
+          <li><strong>&lt;</strong> Plus petit que	</li>
+          <li><strong>&gt;=</strong> 	Plus grand que ou &eacute;gal &agrave; </li>
+          <li><strong>&lt;=</strong>Plus petit que ou &eacute;gal &agrave;</li>
+        </ol>
+      </li>
+      <li>Notez que la conditon de la ligne 6 ci-dessus pourraient &eacute;galement avoir &eacute;t&eacute; entr&eacute;e sous la forme&nbsp;:<br />
+      if ($totalscore <strong>&lt;= 60</strong> and $totalscore &gt; 50). Nous aurions &eacute;galement pu utliser la variable $totalscorepercent dans nos formules de condition. </li>
+      <li>      Vous ne pouvez utiliser qu'un maximum de 2 comparaisons par formule. Vous devez inclure les comparaisons entre des parenth&egrave;ses. Au lieu du connecteur &quot;and&quot; vous pouvez utiliser le connecteur &quot;&amp;&amp;&quot;. Vous <em>pouvez</em> mettre des espaces (facultatifs) avant et apr&egrave;s les parenth&egrave;ses et les op&eacute;rateurs de comparaison. Vous devez entourer le connecteur &quot;and&quot; de parenth&egrave;ses (mais si vous utlisez &agrave; la place le connecteur &quot;&amp;&amp;&quot; les espaces sont facultatifs). </li>
+    </ol>
+  </li>
+  <li>    Lorsque vous avez termin&eacute;, <em>Enregistrez les param&egrave;tres</em>. Si vous avez fait une ou plusieurs erreurs de syntaxe dans votre champ du <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong> des messages d'erreur appropri&eacute;s s'afficheront et vous ne pourrez enregistrer les param&egrave;tres tant que vous n'aurez pas corrig&eacute; ces erreurs. N'oubliez pas que dans les messages d'erreur les num&eacute;ros de ligne renvoient &agrave; une ligne continue, pas aux lignes apparentes qui d&eacute;pendent de la largeur de la fen&ecirc;tre de votre navigateur et de votre &eacute;cran&nbsp;! </li>
+</ol>
+<h4>Exemple n&deg;2</h4>
+<h5>Questionnaire: <em>Multiple Intelligences Test</em></h5>
+<ol>
+  <li>Cr&eacute;ez votre questionnaire comme d'habitude. </li>
+  <li>Cliquez sur l'onglet <strong>R&eacute;glages avanc&eacute;s</strong>.</li>
+  <li>Dans les Options d'envoi, <em>Analyse de donn&eacute;es</em>, s&eacute;lectionnez <strong>Sous-scores </strong> dans la liste d&eacute;roulante. Enregistrez les param&egrave;tres.</li>
+  <li>Commencez &agrave; cr&eacute;er vos questions. Dans la liste d&eacute;roulante <em>Ajouter une question de ce type</em>, 
+    vous remarquerez que la liste des types de questions disponibles a &eacute;t&eacute; r&eacute;duite &agrave; 4&nbsp;(cf. explications dans l'exemple 1 plus haut). <br />
+    <table class="questiontable">
+      <tr>
+        <td width="119"><em>Texte de la question </em></td>
+        <td>Section 1 (Li)</td>
+      </tr>
+      <tr>
+        <td valign="top"><em>R&eacute;ponses possibles </em></td>
+        <td>0=Mostly Disagree<br />
+          1=Slightly Disagree<br />
+          2=No Opinion<br />
+          3=Slightly Agree<br />
+          4=Mostly Agree<br />
+          I find it easy to make up stories<br />
+          When talking to someone, I tend to listen to the words they use not just what they mean<br />
+          I enjoy cross words, word searches or other word puzzles<br />
+          I am a convincing liar<br />
+          I find it easy to remember quotes or phrases<br />
+          At school one of may favourite subjects is / was English<br />
+          I enjoy debates and discussions<br />
+          I often talk to myself &ndash; out loud or in my head<br />
+          When I am abroad, I find it easy to pick up the basics of another language<br />
+          I find pleasure in reading</td>
+      </tr>
+    </table>
+  </li>
+  <li>  Dans cet exemple nous utiliserons l'option <strong> Echelle de Likert avec &quot;degr&eacute;s nomm&eacute;s&quot;</strong>. Dans le champ &quot;r&eacute;ponses possibles&quot;, les degr&eacute;s nomm&eacute;s doivent &ecirc;tre pr&eacute;c&eacute;d&eacute;s d'une &quot;valeur&quot; (ou &quot;score&quot;) suivie imm&eacute;diatement du signe &eacute;gal (=). La liste des degr&eacute;s nomm&eacute;s doit pr&eacute;c&eacute;der la liste des &quot;sous-questions&quot;. </li>
+  <li>Lorsque vous avez fini de cr&eacute;er vos questions, retournez sur l'onglet <strong>R&eacute;glages avanc&eacute;s</strong> pour &eacute;diter le <strong>Titre</strong> et le <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong>. Le Titre sera affich&eacute; en haut des r&eacute;ponses du r&eacute;pondant. R&eacute;digez un titre descriptif bref. </li>
+  <li>Dans le champ du <strong>Corps de texte</strong> de l'<strong>Analyse de donn&eacute;es</strong> vous entrerez les divers Calculs, Conditions et Messages &agrave; afficher pour le R&eacute;pondant. Veillez &agrave; suivre tr&egrave;s attentivement les r&egrave;gles expos&eacute;es dans les exemples ci-dessous pour &eacute;viter l'affichage de messages d'errreur&nbsp;!</li>
+  <li>Dans le mode <strong>Sous-Total</strong> de l'Analyse de donn&eacute;es, vous devez entrer une formule de calcul pour chaque section de votre questionnaire. </li>
+  <li>Examinons l'exemple suivant.
+    <table width="100%" height="210"  style="border:#999999 thin dashed; margin-top:5px; margin-bottom:5px;">
+      <tr>
+        <td valign="top">ligne</td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">1</td>
+        <td>$subscore=$q1.1+$q1.2+$q1.3+$q1.4+$q1.5+$q1.6+$q1.7+$q1.8+$q1.9+$q1.10</td>
+      </tr>
+      <tr>
+        <td valign="top">2</td>
+        <td>Your Linguistic score is $subscorepercent%</td>
+      </tr>
+      <tr>
+        <td valign="top">3</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">4</td>
+        <td>if ( $subscorepercent &gt;= 50)</td>
+      </tr>
+      <tr>
+        <td valign="top">5</td>
+        <td>Learning style: you are at ease with words and language.</td>
+      </tr>
+      <tr>
+        <td valign="top">6</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">7</td>
+        <td>if ( $subscorepercent &lt; 50)</td>
+      </tr>
+      <tr>
+        <td valign="top">8</td>
+        <td>Learning style: you are probably not at ease with words and language.</td>
+      </tr>
+      <tr>
+        <td valign="top">9</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">10</td>
+        <td>$subscore=$q2.1+$q2.2+$q2.3+$q2.4+$q2.5+$q2.6+$q2.7+$q2.8+$q2.9+$q2.10</td>
+      </tr>
+      <tr>
+        <td valign="top">11</td>
+        <td>Your Logical-Mathematical score is $subscorepercent%</td>
+      </tr>
+      <tr>
+        <td valign="top">12</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">13</td>
+        <td>if ( $subscorepercent &gt;= 50)</td>
+      </tr>
+      <tr>
+        <td valign="top">14</td>
+        <td>Learning style: you are at ease with numbers and logic.</td>
+      </tr>
+      <tr>
+        <td valign="top">15</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">16</td>
+        <td>if ( $subscorepercent &lt; 50)</td>
+      </tr>
+      <tr>
+        <td valign="top">17</td>
+        <td>Learning style: you are probably not at ease with numbers and logic.</td>
+      </tr>
+      <tr>
+        <td valign="top">&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top">&nbsp;</td>
+        <td>etc.</td>
+      </tr>
+    </table>
+  </li>
+  <li>Les lignes 1, 10, etc. contiennent une simple addition de toutes les questions (ou sous-questions) pour obtenir le sous-score total
+
+    des choix effectu&eacute;s par le r&eacute;pondant. La syntaxe utilise une variable
+    $subscore. Chaque question est identifi&eacute;e par le symbole $q imm&eacute;diatement 
+    suivi du num&eacute;ro de la question telle qu'elle s'affiche dans le questionnaire. Selon le type de question et les options utilis&eacute;es, il y a diff&eacute;rentes fa&ccedil;ons d'identifier une question, une sous-question et ses &quot;valeurs&quot;.
+    <ol style="list-style:lower-alpha;">
+      <li>Pour les questions de type Bouton radio (ou Liste d&eacute;roulante), entrez simplement le num&eacute;ro de la question sous la forme $q1, $q2, etc. </li>
+      <li>Pour les questions de type Echelle de Likert il y a 2 possibilit&eacute;s&nbsp;:
+        <ol>
+          <li>Si une question de type Echelle de Likert ne contient qu'une seule &quot;sous-question&quot; (comme dans l'exemple n&deg; 1 plus haut) il n'est pas n&eacute;cessaire d'entrer le num&eacute;ro de cette unique sous-question (mais vous pouvez le faire). Vous pouvez donc &eacute;crire&nbsp;:  &quot;$subscore=$q1.1+$q2.1&quot; ou plus simplement &quot;$subscore=$q1+$q2&quot;.</li>
+          <li>Si une question de type Echelle de Likert contient plusieurs &quot;sous-questions&quot; (comme dans l'exemple n&deg;2) vous <strong>devez</strong> entrer le num&eacute;ro des sous-questions comme dans l'exemple donn&eacute; ici&nbsp;:<br />
+            &quot;$subscore=$q2.1+$q2.2+$q2.3+etc&quot;. Si vous oubliez et que par exemple vous &eacute;crivez&nbsp;: &quot;$subscore=$q1+$q2&quot; etc. un message d'erreur vous rappelera &agrave; l'ordre. <br /> 
+          </li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+  <li>La ligne qui suit imm&eacute;diatement une formule de calcul d'un sous-score contient un message appartenant &agrave; ce sous-score. Vous avez 3 variables &agrave; votre disposition lors de la r&eacute;daction de ces messages&nbsp;:   $subscore, $maxsubscore et $subscorepercent.</li>
+  <li>Si vous avez besoin d'afficher des messages conditionn&eacute;s par la valeur d'un sous-score, vous devez r&eacute;diger des formules de conditions tout comme dans le mode Score Total de l'Analyse de donn&eacute;es de l'exemple n&deg; 1 plus haut. Les r&egrave;gles de la syntaxe sont les m&ecirc;mes, sauf que vous utiliserez les variables $subscore ou $subscorepercent dans vos r&egrave;gles conditionnelles. </li>
+  <li>Lorsque vous avez termin&eacute;, <em>Enregistrez les param&egrave;tres</em>.</li>
+  <li><strong>Note</strong>.- Pour plus de commodit&eacute;, dans notre questionnaire d'exemple <em>Multiple Intelligences Test</em> nous avons mis toutes les sous-questions concernant un type particulier d'intelligence &agrave; l'int&eacute;rieur d'une m&ecirc;me question de type Echelle de Likert. Cette fa&ccedil;on de proc&eacute;der facilite la r&eacute;daction des formules de calcul des sous-totaux pour chaque section. Mais normalement dans ce type de &quot;test de personnalit&eacute;&quot; on m&eacute;lange toutes les questions et sous-questions afin que le r&eacute;pondant ne puisse pas &quot;deviner&quot; quel trait de sa personnalit&eacute; est &quot;test&eacute;&quot;. </li>
+</ol>
+<h4>Utilisation de la variante Osgood dans une question de type Echelle de Likert </h4>
+<p>Exemple</p>
+<table class="questiontable">
+  <tr>
+    <td>Type d'&eacute;chelle </td>
+    <td width="550">Osgood</td>
+  </tr>
+  <tr>
+    <td width="161"><em>Texte de la question  </em></td>
+    <td><p>&Ccedil;a ne sert &agrave; rien de travailler dur. </p></td>
+  </tr>
+  <tr>
+    <td valign="top"><em>R&eacute;ponses possibles  </em></td>
+    <td>0=--<br />
+      1=-<br />
+      2=&plusmn;<br />
+      3=+<br />
+      4=++<br />
+    Pas du tout d'accord|Tout &agrave; fait d'accord </td>
+  </tr>
+</table>
+<div class="questiontable">
+  <p>Donnera ceci dans le questionnaire&nbsp;: </p>
+  <div>
+    <p>Q1.- &Ccedil;a ne sert &agrave; rien de travailler dur.</p>
+  </div>
+  <table border="0" cellpadding="0" cellspacing="1">
+    <tbody>
+      <tr>
+        <td></td>
+        <td>&nbsp;--&nbsp;</td>
+        <td>&nbsp;-&nbsp;</td>
+        <td>&nbsp;&plusmn;&nbsp;</td>
+        <td>&nbsp;+&nbsp;</td>
+        <td>&nbsp;++&nbsp;</td>
+		        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>Pas du tout d'accord&nbsp;</td>
+        <td><input type="radio" /></td>
+  <td><input type="radio" /></td>
+  <td><input type="radio" /></td>
+  <td><input type="radio" /></td>
+  <td><input type="radio" /></td>        <td>&nbsp;Tout &agrave; fait d'accord </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p>Si le r&eacute;pondant choisit par exemple la colonne --, cette question vaudra un &quot;score&quot; de 0&nbsp;; la colonne - vaudra 1 point, la colonne  &plusmn; 2 points, etc. </p>
+<h4>Affichage des r&eacute;sultats de l'Analyse de donn&eacute;es (&quot;scores&quot; et messages) </h4>
+<p>Lorsqu'un questionnaire a &eacute;t&eacute; param&eacute;tr&eacute; pour un mode <strong>Score Total</strong> ou un mode <strong>Sous-scores</strong> de l'<strong>Analyse de donn&eacute;es</strong>, les divers &quot;scores&quot; et messages s'afficheront &agrave; deux endroits diff&eacute;rents. </p>
+<ul>
+  <li>Lorsque le r&eacute;pondant a fini de r&eacute;pondre et soumet ses r&eacute;ponses, les scores et messages s'afficheront d&egrave;s qu'il aura cliqu&eacute; sur le bouton <em>Envoyer le questionnaire</em>. </li>
+  <li>Ensuite, n'importe quel utilisateur ayant le r&ocirc;le avec la capacit&eacute; <em>Voir les r&eacute;ponses individuelles</em> pourra voir ces scores et messages en cliquant sur l'onglet  <em>Voir les r&eacute;ponses individuelles</em>. </li>
+</ul>
+<h4>D&eacute;gagement de responsabilit&eacute; </h4>
+<p>Les questionnaires faisant appel &agrave; la fonctionnalit&eacute; Analyse de donn&eacute;es pr&eacute;sents sur mon site de test Moodle sont uniquement destin&eacute;s &agrave; illustrer le fonctionnement de cette fonctionnalit&eacute;. Ils n'ont aucune valeur scientifique. Je vous invite &agrave; consulter les divers sites mentionn&eacute;s dans leur R&eacute;sum&eacute; pour plus d'information. </p>
+<p>La fonctionnalit&eacute; Analyse de donn&eacute;es pr&eacute;sent&eacute;e ici ne constitue qu'une &quot;d&eacute;monstration de concept&quot; et rien ne garantit que cette fonctionnalit&eacute; sera pr&eacute;sente un jour proche ou lointain dans une distribution officielle du plugin Questionnaire de Moodle. </p>
+<p>Joseph R&eacute;zeau - co-responsable du module Questionnaire de Moodle. </p>
+<p><a href="mailto:moodle@rezeau.org?subject=Questionnaire module::Data Analysis feature">moodle@rezeau.org </a></p>
+<p>
+  <!-- #BeginDate format:En2 -->07-Ao&ucirc;-2012<!-- #EndDate -->
+</p>
+</body>
+</html>

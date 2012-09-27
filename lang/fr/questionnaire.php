@@ -9,9 +9,23 @@ $string['alignment_help'] = 'Par défaut les boutons radio sont disposés et ali
 $string['alignment_link'] = 'mod/questionnaire/questions#Radio_Buttons';
 $string['all'] = 'Tout';
 $string['alreadyfilled'] = 'Vous avez déjà répondu à ce questionnaire{$a}. Merci.';
+$string['analysis'] = 'Analyse de données';
+$string['analysis_help'] = 'Pour une aide détaillée sur le système d\'analyse des données, <b>clic droit</b> <a href="lang/fr/help_data_analysis.html"><b>ICI</b></a>';
+$string['analysiserror01'] = 'La ligne {$a} ne doit pas être vide&nbsp;!';
+$string['analysiserror02'] = 'La ligne {$a} doit commencer par "$subscore =" (pour un calcul de sous-score) OU une condition de type "if ($subscore ...)"&nbsp;!';
+$string['analysiserror03'] = 'ERREUR ligne {$a->linenumber} dans l\'expression <strong>{$a->linestring}</strong> pour calculer le sous-score. Veuillez lire l\'aide.';
+$string['analysiserror04'] = 'ERROR Line {$a->linenumber}: There is no {$a->questiontype}{$a->questionnb} in this Questionnaire!';
+$string['analysiserror04'] = 'ERREUR ligne {$a->linenumber}: il n\'y a pas de {$a->questiontype}{$a->questionnb} dans ce Questionnaire&nbsp;!';
+$string['analysiserror05'] = 'Variable(s) inconnue(s) <em>{$a->output}</em> ligne {$a->linenumber}: <b>{$a->linestring}</b>.';
+$string['analysiserror06'] = 'ERREUR ligne {$a->linenumber}: Veuillez préciser le numéro de {$a->questiontype}? de la question {$a->questionnb} (total&nbsp;: {$a->nbsubquestions} {$a->subquestions}).';
+$string['analysiserror07'] = 'ERREUR ligne {$a->linenumber} dans votre expression <strong>{$a->linestring}</strong> : Veuillez vérifier votre condition "if ($totalcore ...)"&nbsp;!';
+$string['analysiserror08'] = 'Il manque un signe $ devant les question(s) <strong>{$a->output}</strong> ligne {$a->linenumber}: <b>{$a->linestring}</b>.';
+$string['analysiserror09'] = 'ERREUR ligne {$a->linenumber} dans votre expression <strong>{$a->linestring}</strong> : Veuillez vérifier votre condition "if ($subscore ...)"&nbsp;!';
 $string['anonymous'] = 'Anonyme';
 $string['average'] = 'Moyenne';
 $string['averagerank'] = 'Rang moyen';
+$string['averageposition'] = 'Position moyenne';
+$string['backtorespondentslist'] = 'Retour à la liste des réponses';
 $string['bodytext'] = 'Corps de texte';
 $string['boxesnbexact'] = 'exactement&nbsp;{$a} case(s).';
 $string['boxesnbmax'] = 'un maximum de {$a} case(s).';
@@ -22,6 +36,8 @@ $string['checkallradiobuttons'] = 'Veuillez cocher un bouton radio sur <em>chaqu
 $string['checkboxes'] = 'Cases à cocher';
 $string['checkboxes_help'] = 'Entrez une option à cocher par ligne.';
 $string['checkboxes_link'] = 'mod/questionnaire/questions#Check_Boxes';
+$string['checknotstarted'] = 'Selectionner les \'pas commencés\'';
+$string['checkstarted'] = 'Selectionner les \'commencés\'';
 $string['closed'] = 'Questionnaire fermé le {$a}. Merci.';
 $string['closedate'] = 'Date de fermeture';
 $string['closedate_help'] = 'Vous pouvez indiquer la date d\'ouverture et de fermeture d\'un questionnaire. 
@@ -54,6 +70,8 @@ $string['deletedallresp'] = 'TOUTES les réponses ont été effacées.';
 $string['deletedresp'] = 'Réponses supprimées.';
 $string['deleteresp'] = 'Supprimer ces réponses';
 $string['deletingresp'] = 'Suppression des réponses';
+$string['dependquestion'] = 'Branchement conditionnel';
+$string['dependquestion_help'] = 'Pour une aide détaillée sur le branchement conditionnel, <b>clic droit</b> <a href="lang/fr/help_skip_logic.html"><b>ICI</b></a>';
 $string['displaymethod'] = 'La méthode d\'affichage n\'est pas définie pour ce type de question.';
 $string['download'] = 'Exporter les réponses au format texte/CSV';
 $string['downloadtextformat'] = 'Download in text format';
@@ -83,6 +101,7 @@ $string['fieldlength_help'] = 'Affiche une boîte de texte d\'une seule ligne de
 où la longueur maximale du texte saisi par le répondant est limitée à y caractères.
 
 Valeurs par défaut : 20 caractères pour la longueur de la boîte [Longueur de la boîte de texte] et 25 caractères pour le texte effectivement saisi par le répondant [Longueur texte max.].';
+$string['firstrespondent'] = 'Première réponse';
 $string['grade'] = 'Note pour ce questionnaire';
 $string['headingtext'] = 'Titre';
 $string['horizontal'] = 'Horizontal';
@@ -98,12 +117,14 @@ $string['invalidsurveyid'] = 'Identificateur de questionnaire non valide.';
 $string['kindofratescale'] = 'Type d\'échelle';
 $string['kindofratescale_help'] = 'Voir la documentation détaillée ci-dessous.';
 $string['kindofratescale_link'] = 'mod/questionnaire/questions#Type_of_rate_scale';
+$string['lastrespondent'] = 'Dernière réponse';
 $string['length'] = 'Longueur';
 $string['maxdigitsallowed'] = 'Max. chiffres autorisés';
 $string['maxdigitsallowed_help'] = 'Utilisez Max. chiffres autorisés pour limiter le nombre de chiffres entrés pour une question de type numérique. 
 Utilisez Nb de chiffres après la virgule pour forcer un certain nombre de chiffres après la virgule. ';
 $string['maxforcedresponses'] = 'Max. cases à cocher';
 $string['maxtextlength'] = 'Longueur  texte max.';
+$string['messageprovider:message'] = 'Rappel de Questionnaire';
 $string['minforcedresponses'] = 'Min. cases à cocher';
 $string['minforcedresponses_help'] = 'Utilisez ces paramètres si vous voulez forcer les étudiants à cocher un minimum de **Min. cases à cocher** ou un maximum de **Max. cases à cocher**. 
 Pour les forcer à cocher un nombre exact de cases, tapez la même valeur pour **Min.** et **Max**. Si vous voulez uniquement forcer un minimum ou un maximum de cases cochées, 
@@ -114,6 +135,7 @@ $string['misconfigured'] = 'Le cours est mal configuré.';
 $string['missingquestion'] = 'Vous n\'avez pas répondu à la question obligatoire suivante&nbsp;:&nbsp;';
 $string['missingquestions'] = 'Vous n\'avez pas répondu aux questions obligatoires suivantes&nbsp;:&nbsp;';
 $string['modulename'] = 'Questionnaire';
+$string['modulename_help'] = 'Le module questionnaire permet de créer des sondages avec divers types de questions, afin de rassembler les opinions des utilisateurs.';
 $string['modulenameplural'] = 'Questionnaires';
 $string['move'] = 'Déplacer la question';
 $string['movedn'] = 'Descendre la question';
@@ -129,6 +151,7 @@ $string['noanswer'] = 'Sans réponse';
 $string['nodata'] = 'Aucune donnée n\'a été envoyée.';
 $string['noduplicates'] = 'Choix uniques';
 $string['noneinuse'] = 'Aucun contenu n\'est défini actuellement.';
+$string['non_respondents'] = 'Utilisateurs qui n\'ont pas encore répondu à ce questionnaire';
 $string['nopublicsurveys'] = 'Pas de questionnaires publics.';
 $string['noresponsedata'] = 'Il n\'y a pas de réponses pour cette question.';
 $string['noresponses'] = 'Pas de réponses';
@@ -140,6 +163,7 @@ $string['notavail'] = 'Ce questionnaire n\'est pas encore disponible. Réessayez
 $string['noteligible'] = 'Vous n\'êtes pas autorisé à répondre à ce questionnaire.';
 $string['notemplatesurveys'] = 'Pas de modèles de questionnaires.';
 $string['notopen'] = 'Ce questionnaire ne sera pas disponible avant le {$a}.';
+$string['not_started'] = 'pas commencé';
 $string['num'] = 'n°';
 $string['numberfloat'] = 'Le nombre que vous avez tapé<strong>{$a->number}</strong> a été reformaté/arrondi avec une précision de <strong>{$a->precision}</strong> chiffres après la virgule.';
 $string['numberofdecimaldigits'] = 'Nb de chiffres après la virgule';
@@ -151,6 +175,7 @@ $string['of'] = 'de';
 $string['opendate'] = 'Date d\'ouverture';
 $string['opendate_help'] = 'Vous pouvez indiquer la date d\'ouverture et de fermeture d\'un questionnaire. 
 Les étudiants ne peuvent répondre au questionnaire qu\'entre ces deux dates. En dehors de cette période, le questionnaire n\'est pas disponible.';
+$string['option'] = 'option {$a}';
 $string['optionalname'] = 'Nom de la question';
 $string['optionalname_help'] = 'Le **nom de la question** est seulement utilisé lors de l\'exportation des données au format CSV/Excel. 
 Si vous ne faites jamais d\'export de ce type, vous n\'avez pas besoin d\'entrer un nom de question. 
@@ -295,19 +320,27 @@ $string['sectionbreak_help'] = '----- Saut de page -----';
 $string['sectiontext'] = 'Description';
 $string['sectiontext_help'] = 'Ceci n\'est pas une question mais un bref texte par ex. pour introduire une série de quesions.';
 $string['selecttheme'] = 'Choisissez un thème (CSS) pour ce questionnaire.';
+$string['send'] = 'Send';
 $string['sendemail'] = 'Envoyer une copie par courriel.';
+$string['send_message'] = 'Envoyer un message aux utilisateurs sélectionnés';
 $string['sendemail_help'] = 'Envoyer une copie de chaque questionnaire rempli à cette adresse.
 Vous pouvez saisir plusieurs adresses, séparées par une virgule. 
 (laissez vide si vous ne souhaitez pas recevoir de courriel).';
 $string['settings'] = 'Paramètres';
 $string['settingssaved'] = 'Paramètres enregistrés.';
+$string['show_nonrespondents'] = 'Afficher les non-répondants';
+$string['started'] = 'commencé';
 $string['strfdate'] = '%d-%m-%Y';
 $string['strfdateformatcsv'] = 'd/m/Y H:i:s';
 $string['submitoptions'] = 'Options d\'envoi du questionnaire';
 $string['submitsurvey'] = 'Envoyer le questionnaire';
 $string['submitted'] = 'Soumis le :';
+$string['subquestionnum'] = 'Sous-question n°&nbsp;';
+$string['subquestions'] = 'Sous-questions';
 $string['subtitle'] = 'Sous-titre';
 $string['subtitle_help'] = 'Ce sous-titre (facultatif) n\'apparait que sur la 1ère page du questionnaire (si celui-ci comporte plusieurs pages).';
+$string['subscores'] = 'Sous-scores';
+$string['subject'] = 'Sujet';
 $string['summary'] = 'Résumé';
 $string['surveynotexists'] = 'Le questionnaire n\'existe pas.';
 $string['surveyowner'] = 'Seuls les propriétaires de ce questionnaire sont autorisés à effectuer cette opération.';
@@ -333,6 +366,7 @@ $string['title'] = 'Titre';
 $string['title_help'] = 'Titre du questionnaire, qui s\'affichera en haut de chaque page. Par défaut ce titre est le même que le Nom du questionnaire.';
 $string['today'] = 'aujourdhui';
 $string['total'] = 'Total';
+$string['totalscore'] = 'Score Total';
 $string['type'] = 'Type de question';
 $string['undefinedquestiontype'] = 'Type de question inconnu&nbsp;!';
 $string['unknown'] = 'Inconnu';
@@ -346,9 +380,12 @@ $string['view'] = 'Voir';
 $string['viewallresponses'] = 'Voir toutes les réponses';
 $string['viewallresponses_help'] = 'Si le questionnaire est paramétré pour **Type des groupes** : *Groupes visibles*, ou *Groupes séparés* et que l\'utilisateur actuel possède la capacité 
 *Accéder à tous les groupes* (dans le contexte actuel) et que des groupes d\'utilisateurs ont été définis dans le cours actuel, alors l\'utilisateur a accès à une liste déroulante 
-des groupes existants. Cette liste déroulante lui permet de "filtrer" les réponses au questionnaire par groupes.';
+des groupes existants. 
+
+Cette liste déroulante lui permet de "filtrer" les réponses au questionnaire par groupes.';
 $string['viewallresponses_link'] = 'Voir_les_réponses#Filtrer_par_groupes';
 $string['viewbyresponse'] = 'Voir les réponses individuelles';
+$string['viewbyresponse_help'] = 'Voir les réponses individuelles *** HELP TODO';
 $string['viewresponses'] = 'Toutes les réponses ({$a})';
 $string['viewyourresponses'] = 'Vos réponses : voir {$a}';
 $string['warning'] = 'ATTENTION! erreur rencontrée.';

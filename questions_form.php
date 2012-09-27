@@ -65,8 +65,18 @@ class questionnaire_questions_form extends moodleform {
         $attributes = 'onChange="this.form.submit()"';
 
         $select = '';
-        if (!($qtypes = $DB->get_records_select_menu('questionnaire_question_type', $select, null, '', 'typeid,type'))) {
-            $qtypes = array();
+        
+		// if survey is set to Data Analysis, only use compatible question types (plus pagebreak and label)
+        if ($questionnaire->survey->theme == 'totalscore' || $questionnaire->survey->theme == 'subscores') {
+        	$qtypes[4] = QUESRADIO;
+        	$qtypes[6] = QUESDROP;
+        	$qtypes[8] = QUESRATE;
+        	$qtypes[99] = QUESPAGEBREAK;
+        	$qtypes[100] = QUESSECTIONTEXT;
+        } else {
+        	if (!($qtypes = $DB->get_records_select_menu('questionnaire_question_type', $select, null, '', 'typeid,type'))) {
+        		$qtypes = array();
+        	}	
         }
         // needed for non-English languages JR
         foreach ($qtypes as $key => $qtype) {
@@ -114,6 +124,36 @@ class questionnaire_questions_form extends moodleform {
             $tid = $question->type_id;
             $qtype = $question->type;
             $required = $question->required;
+            $dependency = '';
+            $dependchoice = '';
+            if ($question->dependquestion != 0) {
+                $dependquestion = $DB->get_record('questionnaire_question', array('id' => $question->dependquestion), $fields='name,type_id');
+                if (is_object($dependquestion)) {
+                    switch ($dependquestion->type_id) {
+                        case QUESRADIO:
+                        case QUESDROP:
+                            $dependchoice = $DB->get_record('questionnaire_quest_choice', array('id' => $question->dependchoice), $fields='content');
+                            $dependchoice = $dependchoice->content;
+                            $contents = choice_values($dependchoice);
+                            if ($contents->modname) {
+                                $dependchoice = $contents->modname;
+                            }
+                            break;
+                        case QUESYESNO:
+                            switch ($question->dependchoice) {
+                                case 0:
+                                    $dependchoice = get_string('yes');
+                                    break;
+                                case 1:
+                                    $dependchoice = get_string('no');
+                                    break;
+                            }
+                            break;
+                    }
+                    $dependency = '<strong>'.get_string('dependquestion', 'questionnaire').'</strong> : '.$dependquestion->name.'->'.$dependchoice;
+                }
+            }
+                        
             $pos = $question->position;
             $qnum_txt = '&nbsp;';
             if ($tid<99) {
@@ -132,7 +172,7 @@ class questionnaire_questions_form extends moodleform {
             }
 
             $quesgroup = 'quesgroup_'.$pos;
-            $$quesgroup = array();
+            
             $butclass = array('class' => 'questionnaire_qbut');
 
             if (!$this->moveq) {
@@ -216,7 +256,9 @@ class questionnaire_questions_form extends moodleform {
             ${$quesgroup}[] =& $mform->createElement('static', 'qname_'.$question->id, '', '<div class="qname">'.$qname.'</div>');
 
             $mform->addGroup($$quesgroup, 'questgroup', '', '', false);
-
+            if ($dependency) {
+                $mform->addElement('static', 'qdepend_'.$question->id, '', '<div class="qdepend">'.$dependency.'</div>');
+            }
             $mform->addElement('static', 'qcontent_'.$question->id, '', '<div class="qcontent">'.$content.'</div>');
 
             $pos++;
@@ -315,6 +357,10 @@ class questionnaire_edit_question_form extends moodleform {
             $defprecise = 0;
         }
 
+        $defdependquestion = 0;
+        $defdependchoice = 0;
+        $dlabelname = 'dependquestion';
+
         $mform    =& $this->_form;
 
         //-------------------------------------------------------------------------------
@@ -408,16 +454,24 @@ class questionnaire_edit_question_form extends moodleform {
         } else {
             $question->precise = isset($question->precise) ? $question->precise : $defprecise;
             $mform->addElement('text', 'precise', get_string($phelpname, 'questionnaire'), array('size'=>'1'));
-            //$mform->addHelpButton('precise', $phelpname, 'questionnaire');
         }
 
+        /// Dependence fields:
+        $position = isset($question->position) ? $question->position : count($questionnaire->questions) + 1;  
+        $dependencies = get_dependencies($questionnaire->questions, $position);
+        if (count($dependencies) > 1) {
+            $question->dependquestion = isset($question->dependquestion) ? $question->dependquestion.','.$question->dependchoice : '0,0';
+            $group = array($mform->createElement('selectgroups', 'dependquestion', '', $dependencies) );
+            $mform->addGroup($group, 'selectdependency', get_string('dependquestion', 'questionnaire'), '', false);
+            $mform->addHelpButton('selectdependency', 'dependquestion', 'questionnaire');
+        }
+            
         /// Content field:
         $modcontext    = $this->_customdata['modcontext'];
         $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'context'=>$modcontext);
         $mform->addElement('editor', 'content', get_string('text', 'questionnaire'), null, $editoroptions);
         $mform->setType('content', PARAM_RAW);
         $mform->addRule('content', null, 'required', null, 'client');
-//        $mform->addHelpButton('content', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
 
         /// Options section:
         // has answer options ... so show that part of the form

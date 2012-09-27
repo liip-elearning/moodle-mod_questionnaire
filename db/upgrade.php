@@ -321,7 +321,29 @@ function xmldb_questionnaire_upgrade($oldversion=0) {
         // questionnaire savepoint reached
         upgrade_mod_savepoint(true, 2010110101, 'questionnaire');
     }
-
+    
+    if ($oldversion < 2012071901) {
+        /// skip logic feature JR proof of concept
+        /// Define field dependquestion to be added to questionnaire_question table
+        $table = new xmldb_table('questionnaire_question');
+        $field = new xmldb_field('dependquestion', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'deleted');
+        
+        /// Conditionally launch add field
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        $table = new xmldb_table('questionnaire_question');
+        $field = new xmldb_field('dependchoice', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'dependquestion');
+        
+        /// Conditionally launch add field
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // savepoint reached
+        upgrade_plugin_savepoint(true, 2012071901,  'questionnaire');
+    }
     return $result;
 }
 

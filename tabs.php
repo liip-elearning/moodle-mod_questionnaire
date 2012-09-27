@@ -60,13 +60,15 @@
             $row2 = array();
             $argstr2 = $argstr.'&byresp=0&action=summary';
             $row2[] = new tabobject('mysummary', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.$argstr2),
-                                    get_string('order_default', 'questionnaire'));
+                                    get_string('viewyourresponses', 'questionnaire', $numresp));
             $argstr2 = $argstr.'&byresp=0&action=vresp';
             $row2[] = new tabobject('mybyresponse', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.$argstr2),
                                     get_string('viewbyresponse', 'questionnaire'));
-            $argstr2 = $argstr.'&byresp=1&action=vall';
-            $row2[] = new tabobject('myvall', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.$argstr2),
-                                    get_string('myresponses', 'questionnaire'));
+            if ($numresp > 1) {
+                $argstr2 = $argstr.'&byresp=1&action=vall';
+                $row2[] = new tabobject('myvall', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.$argstr2),
+                                        get_string('myresponses', 'questionnaire'));
+            }
             if ($questionnaire->capabilities->downloadresponses) {
                 $argstr2 = $argstr.'&action=dwnpg'.'&sid='.$questionnaire->sid;
                 $link  = $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2);
@@ -93,8 +95,8 @@
         $row[] = new tabobject('allreport', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.
                                $argstr.'&action=vall'), get_string('viewresponses', 'questionnaire', $numresp));
         if (in_array($current_tab, array('vall', 'vresp', 'valldefault', 'vallasort', 'vallarsort', 'deleteall', 'downloadcsv',
-                                         'vrespsummary', 'printresp', 'deleteresp'))) {
-        $inactive[] = 'allreport';
+                                         'vrespsummary', 'printresp', 'deleteresp', 'vresplist'))) {
+            $inactive[] = 'allreport';
             $activated[] = 'allreport';
             $row2 = array();
             $argstr2 = $argstr.'&action=vall';
@@ -108,7 +110,6 @@
             }
         }
         if (in_array($current_tab, array('valldefault',  'vallasort', 'vallarsort', 'deleteall', 'downloadcsv'))) {
-            //$inactive[] = 'vall';
             $activated[] = 'vall';
             $row3 = array();
 
@@ -136,15 +137,14 @@
             }
         }
 
-        if (in_array($current_tab, array('vrespsummary', 'printresp', 'deleteresp'))) {
+        if (in_array($current_tab, array('vrespsummary', 'printresp', 'deleteresp', 'vresplist'))) {
             $inactive[] = 'vresp';
             $activated[] = 'vresp';
             $inactive[] = 'printresp';
             $row3 = array();
 
             $argstr2 = $argstr.'&action=vresp';
-            $row3[] = new tabobject('vrespsummary', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
-                                    get_string('summary', 'questionnaire'));
+
             // new way to output popup print window for 2.0 by JR
             $linkname = get_string('print','questionnaire');
             $url = '/mod/questionnaire/print.php?qid='.$questionnaire->id.'&amp;rid='.$rid.
@@ -155,12 +155,19 @@
             $link = new moodle_url($url);
             $action = new popup_action('click', $link, $name, $options);
             $actionlink = $OUTPUT->action_link($link, $linkname, $action, array('title'=>$title));
-            $row3[] = new tabobject('printresp', '', $actionlink);
-
-            if ($questionnaire->capabilities->deleteresponses) {
-                $argstr2 = $argstr.'&action=dresp&rid='.$rid;
-                $row3[] = new tabobject('deleteresp', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
-                                        get_string('deleteresp', 'questionnaire'));
+            if (!in_array($current_tab, array('vresplist'))) {
+                $row3[] = new tabobject('printresp', '', $actionlink);
+    
+                if ($questionnaire->capabilities->deleteresponses) {
+                    $argstr2 = $argstr.'&action=dresp&rid='.$rid;
+                    $row3[] = new tabobject('deleteresp', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
+                                            get_string('deleteresp', 'questionnaire'));
+                }
+            } else {
+                $row3[] = new tabobject('vresplist', '',
+                    get_string('respondents', 'questionnaire'));
+                $row3[] = new tabobject('vresplist', '',
+                    '');
             }
         }
     } else if ($questionnaire->capabilities->readallresponses && ($numresp > 0) &&
@@ -221,6 +228,13 @@
             $row[] = new tabobject('preview', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/preview.php?'.
                                'id='.$questionnaire->cm->id), get_string('preview_label', 'questionnaire'));
         }
+        
+    }
+    if ($questionnaire->capabilities->viewsingleresponse) {
+        $nonrespondenturl = new moodle_url('/mod/questionnaire/show_nonrespondents.php', array('id'=>$questionnaire->cm->id));
+        $row[] = new tabobject('nonrespondents',
+                        $nonrespondenturl->out(),
+                        get_string('show_nonrespondents', 'questionnaire'));
     }
 
     if((count($row) > 1) || (!empty($row2) && (count($row2) > 1))) {

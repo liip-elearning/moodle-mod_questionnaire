@@ -1,0 +1,124 @@
+<html>
+<body style=" font-family:Verdana, Arial, Helvetica, sans-serif; font-size:small;">
+<style type="text/css">
+<!--
+.red {
+	color: #F00;
+}
+-->
+</style>
+<h2>Branchement conditionnel</h2>
+<hr />
+<p>La fonctionnalit&eacute;  &quot;saut de page&quot; ou Branchement conditionnel permet de faire &quot;sauter&quot; le r&eacute;pondant au-del&agrave; de groupes (pages) de questions selon sa r&eacute;ponse &agrave; une question pr&eacute;c&eacute;dente. </p>
+<h3>Exemple simple de &quot;saut&quot; de page </h3>
+<ol>
+  <li>Page 1  
+    <ul>
+      <li>Question 1 Poss&eacute;dez-vous une voiture&nbsp;? Oui/Non. 
+        <ul>
+          <li>R&eacute;ponse Oui-&gt; page 2</li>
+          <li>R&eacute;ponse Non -&gt; page <strong>5</strong> (i.e. <strong><em>sauter</em></strong> les questions non pertinentes des pages 2 &agrave; 4) </li>
+          </ul>
+      </li>
+    </ul>
+  </li>
+
+  <li>Page 2
+    <ul>
+      <li>Question 2: De quelle couleur est votre voiture&nbsp;?</li>
+      <li>Question 3: L'avez-vous achet&eacute;e neuve ou d'occasion&nbsp;?
+        <ul>
+          <li>R&eacute;ponse <em>neuve</em> -&gt; page <strong>3</strong> </li>
+          <li><em>R&eacute;ponse occasion </em> -&gt;page <strong>4</strong> </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Page 3
+    <ul>
+      <li>Question 4: Pourquoi l'avez-vous achet&eacute;e neuve&nbsp;?</li>
+    </ul>
+  </li>
+  <li>Page 4 </li>
+  <ul>
+    <li>Question 5: Pourquoi l'avez-vous achet&eacute;e d'occasion&nbsp;?</li>
+  </ul>
+  <li>Page 5
+    <ul>
+      <li>Question 6: Utilisez-vous parfois les transports publics pour vous rendre &agrave; votre travail&nbsp;?</li>
+      <li>etc. </li>
+    </ul>
+  </li>
+</ol>
+<h4>Proc&eacute;dure &agrave; suivre pour obtenir le d&eacute;roulement ci-dessus&nbsp;:</h4>
+<ul>
+  <li>Cr&eacute;ez la question 1 (Q1) comme question de type <em>Oui/Non</em>
+    <ul>
+      <li><strong>Nom de la question </strong>: <em>poss&egrave;de voiture</em>. Notez que vous <em>devez </em>donner un nom &agrave; votre question, car ce nom sera utilis&eacute; plus tard dans le questionnaire pour la liste des &quot;questions &agrave; Branchement conditionnel&quot;. Donnez un nom le plus court possible (un ou deux mots). </li>
+      <li><strong>R&eacute;ponse obligatoire&nbsp;</strong>:<em> Oui</em></li>
+      <li><strong>Texte de la question </strong>: Poss&eacute;dez-vous une voiture&nbsp;?</li>
+    </ul>
+  </li>
+  <li>Ins&eacute;rez un ---Saut de page---</li>
+  <li>Cr&eacute;ez la question 2 (Q2) comme question de type <em>Texte court</em>.
+    <ul>
+      <li><strong>Nom de la question </strong>: facultatif </li>
+      <li><strong>R&eacute;ponse obligatoire&nbsp;</strong>:<em> Oui</em> ou <em>Non</em> </li>
+      <li><strong>Branchement conditionnel</strong>&nbsp;: <em>poss&egrave;de voiture</em>-&gt;<em>Oui</em></li>
+      <li><strong>Texte de la question </strong>: De quelle couleur est votre voiture&nbsp;?</li>
+    </ul>
+  </li>
+  <li>Cr&eacute;ez la question 3 (Q3) comme question de type <em>Bouton radio</em> ou 
+    <em>Liste d&eacute;roulante</em>
+    <ul>
+      <li><strong>Nom de la question </strong>:<em> achat voiture </em> </li>
+      <li><strong>R&eacute;ponse obligatoire&nbsp;</strong>:<em> Oui</em></li>
+      <li><strong>Branchement conditionnel</strong>&nbsp;:<em> poss&egrave;de voiture</em>-&gt;<em>Oui</em></li>
+      <li><strong>Texte de la question </strong>: L'avez-vous achet&eacute;e neuve ou d'occasion&nbsp;?</li>
+      <li><strong>R&eacute;ponses possibles&nbsp;:
+        </strong>
+        <ul>
+          <li>neuve</li>
+          <li>d'occasion</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Cr&eacute;ez la question Q4 comme question de type <em>Texte court</em> (ou <em>long</em>).
+    <ul>
+      <ul>
+        <li><strong>Nom de la question </strong>: facultatif </li>
+        <li><strong>R&eacute;ponse obligatoire&nbsp;</strong>:<em> Oui</em> ou <em>Non</em> </li>
+        <li><strong>Branchement conditionnel</strong>&nbsp;: <em>achat voiture</em>-&gt;<em>neuve</em></li>
+        <li><strong>Texte de la question </strong>: Pourquoi l'avez-vous achet&eacute;e neuve&nbsp;?</li>
+      </ul>
+    </ul>
+  </li>
+  <li>Ins&eacute;rez un ---Saut de page---</li>
+  <li>Cr&eacute;ez la question Q5 comme question de type <em>Texte court</em> (ou <em>long</em>).
+    <ul>
+      <ul>
+        <li><strong>Nom de la question </strong>: facultatif</li>
+        <li><strong>R&eacute;ponse obligatoire&nbsp;</strong>:<em> Oui</em> ou <em>Non</em> </li>
+        <li><strong>Branchement conditionnel</strong>&nbsp;: <em>achat voiture</em>-&gt;<em>d'occasion</em></li>
+        <li><strong>Texte de la question </strong>: Pourquoi l'avez-vous achet&eacute;e d'occasion&nbsp;?</li>
+      </ul>
+    </ul>
+  </li>
+  <li>Ins&eacute;rez un ---Saut de page---</li>
+  <li>Question 6. Continuez &agrave; cr&eacute;er les questions de la suite du Questionnaire.</li>
+</ul>
+<h3>Note 1 </h3>
+<p>Un r&eacute;pondant peut parcourir les pages d'un questionnaire qui contient un (ou plusieurs) branchements conditionnels vers l'avant ou en arri&egrave;re, comme pour n'importe quel questionnaire multi-pages &quot;normal&quot;. Ceci signifie que toute r&eacute;ponse peut &ecirc;tre modifi&eacute;e &agrave; n'importe quel moment, tant que le r&eacute;pondant n'a pas cliqu&eacute; le bouton <em>Envoyer le questionnaire</em>. Bien entendu, si un r&eacute;pondant modifie sa r&eacute;ponse &agrave; une question comportant un Branchement conditionnel, cette modification entra&icirc;nera une modification de son parcours ult&eacute;rieur. </p>
+<h3>Note 2</h3>
+<p>Une fois qu'un questionnaire a &eacute;t&eacute; cr&eacute;&eacute; avec des questions comportant un branchement conditionnel, ces questions ne doivent &ecirc;tre d&eacute;plac&eacute;es ou supprim&eacute;es qu'avec une extr&ecirc;me attention, afin de ne pas d&eacute;truire la logique des branchements conditionnels. Si vous d&eacute;placez une question qui comporte un branchement conditionnel <em><strong>avant</strong></em> la question o&ugrave; ce branchement est d&eacute;fini, son branchement conditionnel sera <em>supprim&eacute;</em> (car il n'aurait aucun sens). De m&ecirc;me, si vous supprimez une question dont d'autres questions d&eacute;pendent pour leur branchement conditionnel, le branchement conditionnel de ces autres questions sera supprim&eacute;. </p>
+<h3>Note 3</h3>
+<p>Seuls 3 types de question &quot;&agrave; choix multiple&quot; peuvent &ecirc;tre utilis&eacute;s pour d&eacute;clencher la fonctionnalit&eacute; de branchement conditionnel&nbsp;: <strong>Oui/Non, Liste d&eacute;roulante</strong> et <strong>Boutons radio</strong>. En revanche, n'importe quel type de question peut utiliser une question de l'un de ces 3 types pour effectuer un branchement conditionnel - &agrave; condition que ces questions aient un nom&nbsp;! </p>
+<h3>Note 4</h3>
+<p>Sur la page de cr&eacute;ation des questions, pour les questions qui utilisent un branchement conditionnel, le nom et le choix du branchement conditionnel seront affich&eacute;s en rouge. </p>
+<hr />
+<p class="red" style="font-size:smaller; text-align:center">Updated by JR on 
+  <!-- #BeginDate format:En2 -->07-Ao&ucirc;-2012<!-- #EndDate -->
+</p>
+</body>
+</html>

@@ -53,7 +53,7 @@
 
 #page-mod-questionnaire-questions div.qcontainer div.fstatic {
     width: 97%;
-    border-bottom: solid #000000 1px;
+    #border-bottom: solid #000000 1px;
     margin-right: 1em;
     margin-left: 10px;
     background-color: #FFFFFF;
@@ -61,6 +61,7 @@
 
 #page-mod-questionnaire-questions div.qcontainer div.qcontent {
     margin-bottom:-1em;
+    border-bottom: solid #000000 1px;
 }
 
 div.qoptcontainer div.ftextarea {
@@ -195,7 +196,9 @@ body#page-mod-questionnaire-view .surveyPage {
     text-align:right;
 }
 body#page-mod-questionnaire-view .c0,
-body#page-mod-questionnaire-preview .c0 {
+body#page-mod-questionnaire-preview .c0,
+body#page-mod-questionnaire-report .likertresp .c0,
+body#page-mod-questionnaire-myreport .likertresp .c0  {
     background-color: #fafafa;
     border: #CCCCCC 1px    solid;
     padding-left:5px;
@@ -204,7 +207,9 @@ body#page-mod-questionnaire-preview .c0 {
 }
 
 body#page-mod-questionnaire-view .c1,
-body#page-mod-questionnaire-preview .c1 {
+body#page-mod-questionnaire-preview .c1,
+body#page-mod-questionnaire-report .likertresp .c1,
+body#page-mod-questionnaire-myreport .likertresp .c1  {
     background-color: #eee;
     border: #FFFFFF 1px    solid;
     padding-left:5px;
@@ -238,10 +243,20 @@ body#page-mod-questionnaire-myreport .generaltable {
 }
 
 /* new styles - keep old (quOuter, qnInner, qnInnerTable, qnType) for sections etc. */
-#page-mod-questionnaire-view .qn-number,
-#page-mod-questionnaire-view .qn-legend {
+
+#page-mod-questionnaire-view .qn-legend,
+#page-mod-questionnaire-preview .qn-legend,
+#page-mod-questionnaire-report .qn-legend,
+#page-mod-questionnaire-myreport .qn-legend {
      float: left;
 }
+
+#page-mod-questionnaire-preview .qn-number:after,
+#page-mod-questionnaire-report .qn-number:after,
+#page-mod-questionnaire-myreport .qn-number:after {
+	content:".-\0000a0";
+}
+
 #page-mod-questionnaire-view .qn-question {
     margin-left: 35px;
     padding-left: 5px;
@@ -253,4 +268,29 @@ body#page-mod-questionnaire-myreport .generaltable {
     padding: 5px;
     border-left: #CCCCCC thin dotted;
     border-bottom: #CCCCCC thin dotted;
+}
+
+/*skip logic feature*/
+
+#page-mod-questionnaire-questions div.qcontainer div.qdepend {
+    color:#FF0000;
+    margin-bottom:-1em;
+}
+
+/*respondents list feature*/
+
+.respondentstable {
+    padding-top:10px; 
+    padding-left:25px;
+    text-align:left;
+}
+.username {
+    font-size:larger;
+    font-weight:bold;
+    background-color:#dceff3;
+    color:#1e707c;
+}
+/* rate questions percentages */
+.percent {
+    color:#FF0000;
 }

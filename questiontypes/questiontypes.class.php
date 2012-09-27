@@ -172,6 +172,9 @@ class questionnaire_question {
             $this->id = $question->id;
             $this->survey_id = $question->survey_id;
             $this->name = $question->name;
+            // dev jr for skip feature
+            $this->dependquestion = $question->dependquestion;
+            $this->dependchoice = $question->dependchoice;
             $this->length = $question->length;
             $this->precise = $question->precise;
             $this->position = $question->position;
@@ -446,10 +449,17 @@ class questionnaire_question {
         } else if (is_int($rids)) {
             $ridstr = ' AND response_id = '.$rids.' ';
         }
-        $sql = 'SELECT id, response '.
-               'FROM {questionnaire_'.$this->response_table.'} '.
-               'WHERE question_id= ? '.$ridstr;
-        return $DB->get_records_sql($sql, array($this->id));
+        
+        // devjr for Dan Jeffries
+        $sql = 'SELECT T.id, T.response, R.submitted AS submitted, R.username, U.username AS username, U.id AS user, U.lastname, U.firstname, R.survey_id, R.id AS rid '.
+                        'FROM {questionnaire_'.$this->response_table.'} T, '.
+                        '{questionnaire_response} R, '.
+                        '{user} U '.
+                        'WHERE question_id='.$this->id.$ridstr.
+                        ' AND T.response_id = R.id'.
+                        ' AND U.id = R.username '.
+                        'ORDER BY U.lastname, U.firstname';
+        return $DB->get_records_sql($sql);
     }
 
 
@@ -536,18 +546,40 @@ class questionnaire_question {
 
         if($this->type_id  == 8) { //Rank
          // JR there can't be an !other field in rating questions ???
+            $rankvalue = array();
             $select = 'question_id='.$this->id.' AND content NOT LIKE \'!other%\' ORDER BY id ASC'; //JR 4 NOV 2009 added ORDER
             if ($rows = $DB->get_records_select('questionnaire_quest_choice', $select)) {
                 foreach ($rows as $row) {
                     $this->counts[$row->content] = new stdClass();
                     $nbna = $DB->count_records('questionnaire_response_rank', array('question_id' => $this->id, 'choice_id' => $row->id, 'rank' => '-1'));
                     $this->counts[$row->content]->nbna = $nbna;
+                    // $row->value may be null (i.e. empty) or have a 'NULL' value
+                    if ($row->value !== null && $row->value !== 'NULL') {
+                        $rankvalue[] = $row->value; 
                 }
             }
-
+            }
             $isrestricted = ($this->length < count($this->choices)) && $this->precise == 2;
             // usual case
             if (!$isrestricted) {
+                if (!empty ($rankvalue)) {
+                    $sql = "SELECT r.id, c.content, r.rank, c.id AS choiceid 
+                    FROM {$CFG->prefix}questionnaire_quest_choice c, {$CFG->prefix}questionnaire_{$this->response_table} r 
+                    WHERE r.choice_id = c.id 
+                    AND c.question_id = ".$this->id." 
+                    AND r.rank >= 0{$ridstr} 
+                    ORDER BY choiceid";                   
+                    $results = $DB->get_records_sql($sql);
+                    $value = array();
+                    foreach($results as $result) {
+                        if (isset ($value[$result->choiceid])) {
+                            $value[$result->choiceid] += $rankvalue[$result->rank];
+                        } else {
+                            $value[$result->choiceid] = $rankvalue[$result->rank];
+                        }
+                    }
+                }
+
                 $sql = "SELECT c.id, c.content, a.average, a.num
                         FROM {questionnaire_quest_choice} c
                         INNER JOIN
@@ -556,6 +588,11 @@ class questionnaire_question {
                               WHERE c2.question_id = ? AND a2.question_id = ? AND a2.choice_id = c2.id AND a2.rank >= 0{$ridstr}
                               GROUP BY c2.id) a ON a.id = c.id";
                 $results = $DB->get_records_sql($sql, array($this->id, $this->id));
+                if (!empty ($rankvalue)) {
+                    foreach($results as $key => $result) {
+                        $result->averagevalue = $value[$key] / $result->num;
+                    }
+                }
                 /// Reindex by 'content'. Can't do this from the query as it won't work with MS-SQL.
                 foreach ($results as $key => $result) {
                     $results[$result->content] = $result;
@@ -652,7 +689,7 @@ class questionnaire_question {
             if ($isnumeric) {
                 $this->mkreslistnumeric(count($rids), $this->precise);
             } else {
-                $this->mkreslist(count($rids), $this->precise, $prtotal);
+                $this->mkreslisttext($rows);
             }
         } else {
             print_string('noresponsedata', 'questionnaire');
@@ -750,17 +787,35 @@ class questionnaire_question {
 
         if ($rows = $this->get_response_rank_results($rids, $sort)) {
             if($this->type_id == 8) { //Rank
+                $stravgvalue = ''; //for printing table heading 
                 foreach ($this->counts as $key => $value) {
                     $ccontent = $key;
+                    $avgvalue = '';
                     if (array_key_exists($ccontent, $rows)) {
                         $avg = $rows[$ccontent]->average;
                         $this->counts[$ccontent]->num = $rows[$ccontent]->num;
+                        if (isset($rows[$ccontent]->averagevalue)) {
+                            $avgvalue = $rows[$ccontent]->averagevalue;
+                            $osgood = false;
+                            if ($this->precise == 3) { // Osgood's semantic differential
+                                $osgood = true;
+                            }
+                            if ($stravgvalue == '' && !$osgood) {
+                                $stravgvalue = ' ('.get_string('andaveragevalues', 'questionnaire').')';
+                            }
+                    } else {
+                            $avgvalue = null;
+                        }
                     } else {
                         $avg = 0;
                     }
                     $this->counts[$ccontent]->avg = $avg;
+                    $this->counts[$ccontent]->avgvalue = $avgvalue;
                 }
-                $this->mkresavg(count($rids), $this->precise, $prtotal, $this->length, $sort);
+                $this->mkresavg(count($rids), $this->precise, $prtotal, $this->length, $sort, $stravgvalue);
+                
+                // see discussion http://moodle.org/mod/forum/discuss.php?d=185106
+                $this->mkrescount($rids, $rows, $this->precise, $this->length, $sort);
             } else {
                 foreach ($rows as $row) {
                     $rank = $row->rank;
@@ -1751,7 +1806,8 @@ class questionnaire_question {
                 if ($guicross) {
                     $tabledata[] = $this->mkcrossformat($pos, $this->id, $this->type_id);
                 }
-                $tabledata = array_merge($tabledata, array(format_text($content, FORMAT_HTML), $out, $num));
+                // DEV JR do not format as text to preserve potential images in choices
+                $tabledata = array_merge($tabledata, array($content, $out, $num));
                 $table->data[] = $tabledata;
                 $i += $num;
                 $pos++;
@@ -1818,7 +1874,49 @@ class questionnaire_question {
 
         echo html_writer::table($table);
     }
-
+    
+    function mkreslisttext($rows) { // devjr for Dan Jeffries
+        global $CFG, $SESSION, $questionnaire, $OUTPUT;
+        $strresponse = get_string('response', 'questionnaire');
+        $viewsingleresponse	= $questionnaire->capabilities->viewsingleresponse;
+        $nonanonymous = $questionnaire->respondenttype != 'anonymous';
+        $table = new html_table();
+        if ($viewsingleresponse && $nonanonymous) {
+            $strrespondent = get_string('respondent', 'questionnaire');
+            $table->align = array('left', 'left');
+            $currentgroupid = '';
+            if (isset($SESSION->questionnaire->currentgroupid)) {
+                $currentgroupid = $SESSION->questionnaire->currentgroupid;
+            }
+            $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&amp;sid='.$questionnaire->survey->id.
+            '&currentgroupid='.$currentgroupid;
+            $table->head = array($strrespondent, $strresponse);
+            $table->size = array('15%', '*');
+        } else {
+            $table->align = array('left', 'left');
+            $table->head = array('',$strresponse);
+            $table->size = array('2%', '*');
+        }
+        $username = '';
+        foreach ($rows as $row) {
+            $text = format_text($row->response, FORMAT_HTML);
+            if ($viewsingleresponse && $nonanonymous) {
+                $rurl = $url.'&rid='.$row->rid;
+                $title = userdate($row->submitted);
+                $username = $row->username;
+                $user = new stdClass();
+                $user->firstname = $row->firstname;
+                $user->lastname = $row->lastname;
+                $rusername = '<a href="'.$rurl.'" title="'.$title.'">'.fullname($user).'</a>';
+                $table->data[] = array($rusername, $text);
+            } else {
+                $table->data[] = array('&#8226;',$text);
+            }
+    
+        }   
+        echo html_writer::table($table);
+    }
+    
     function mkreslistdate($total, $precision, $showTotals) {
         global $CFG, $OUTPUT;
         $dateformat = get_string('strfdate', 'questionnaire');
@@ -1883,16 +1981,18 @@ class questionnaire_question {
 
     /* {{{ proto void mkresavg(array weights, int total, int precision, bool show_totals)
         Builds HTML showing AVG results. */
-    function mkresavg($total, $precision, $showTotals, $length, $sort) {
+    function mkresavg($total, $precision, $showTotals, $length, $sort, $stravgvalue='') {
         global $CFG, $OUTPUT;
-        $stravg = '<div style="text-align:center">'.get_string('averagerank', 'questionnaire').'</div>';
-        $isna = $this->precise == 1;
-        $isnahead = '';
+        $stravgrank = get_string('averagerank', 'questionnaire');
         $osgood = false;
-        $nbchoices = count ($this->counts);
         if ($precision == 3) { // Osgood's semantic differential
             $osgood = true;
+            $stravgrank = get_string('averageposition', 'questionnaire');
         }
+        $stravg = '<div style="text-align:center">'.$stravgrank.$stravgvalue.'</div>';
+        $isna = $this->precise == 1;
+        $isnahead = '';
+        $nbchoices = count ($this->counts);
         $isrestricted = ($length < $nbchoices) && $precision == 2;
 
         if ($isna) {
@@ -1912,10 +2012,12 @@ class questionnaire_question {
         }
         if (!$osgood) {
             $rightcolwidth = '5%';
+            $avgcolwidth = '5%';
         } else {
-            $rightcolwidth = '25%';
+            $rightcolwidth = '30%';
+            $avgcolwidth = '0%';
         }
-        $table->size = array('*', '40%', $rightcolwidth,'5%');
+        $table->size = array('*', '40%', $rightcolwidth, $avgcolwidth);
 
         $image_url = $CFG->wwwroot.'/mod/questionnaire/images/';
         if (!$length) {
@@ -1973,6 +2075,11 @@ class questionnaire_question {
                  if (!preg_match("/^[0-9]{1,3}=/", $content)) {
                     if (isset($this->counts[$content]->avg)) {
                         $avg = $this->counts[$content]->avg;
+                        if (isset($this->counts[$content]->avgvalue)) {
+                            $avgvalue = $this->counts[$content]->avgvalue;
+                    } else {
+                            $avgvalue = '';
+                        }
                     } else {
                         $avg = '';
                     }
@@ -2001,10 +2108,16 @@ class questionnaire_question {
                     if (!$isna) {
                         if ($osgood) {
                             $table->data[] = array('<div class="mdl-right">'.format_text($content, FORMAT_HTML).'</div>', $out,
-                                '<div class="mdl-left">'.format_text($contentright, FORMAT_HTML).'</div>', sprintf('%.1f', $avg));
+                                '<div class="mdl-left">'.format_text($contentright, FORMAT_HTML).'</div>'/* , sprintf('%.1f', $avg) */);
+                            // JR JUNE 2012 do not display meaningless average rank values for Osgood
                         } else {
                             if($avg) {
-                                $table->data[] = array(format_text($content, FORMAT_HTML), $out, sprintf('%.1f', $avg));
+                                $stravgval = '';
+                                if ($stravgvalue) {
+                                    $stravgval = '('.sprintf('%.1f', $avgvalue).')'; 
+                                }
+                                $table->data[] = array(format_text($content, FORMAT_HTML), $out, sprintf('%.1f', $avg).
+                                    '&nbsp;'.$stravgval);
                             } else {
                                 $table->data[] = array(format_text($content, FORMAT_HTML), $out, get_string('notapplicable', 'questionnaire'));
                             }
@@ -2023,6 +2136,213 @@ class questionnaire_question {
         echo html_writer::table($table);
     }
 
+    function mkrescount($rids, $rows, $precision, $length, $sort) {
+        // display number of responses - see http://moodle.org/mod/forum/discuss.php?d=185106
+        global $CFG, $DB;
+    
+        // prepare data to be displayed
+        $ridstr = '';
+        if (is_array($rids)) {
+            foreach ($rids as $rid) {
+                $ridstr .= (empty($ridstr) ? ' AND response_id IN ('.$rid : ', '.$rid);
+            }
+            $ridstr .= ') ';
+        } else if (is_int($rids)) {
+            $ridstr = ' AND response_id = '.$rids.' ';
+        }
+        $questionid = $this->id;
+        $sql = 'SELECT r.id, c.content, r.rank, c.id AS choiceid '.
+                        'FROM '.$CFG->prefix.'questionnaire_quest_choice c ,'.
+                        $CFG->prefix.'questionnaire_response_rank r '.
+                        'WHERE c.question_id = '.$questionid.
+                        ' AND r.question_id = c.question_id'.
+                        ' AND r.choice_id = c.id '.
+                        $ridstr.
+                        ' ORDER BY choiceid, rank ASC';
+        $choices = $DB->get_records_sql($sql);
+    
+        //sort rows (results) by average value
+        if ($sort != 'default') {
+            $sortArray = array();
+            foreach($rows as $row){
+                foreach($row as $key=>$value){
+                    if(!isset($sortArray[$key])){
+                        $sortArray[$key] = array();
+                    }
+                    $sortArray[$key][] = $value;
+                }
+            }
+            $orderby = "average";
+            switch ($sort) {
+                case 'ascending':
+                    array_multisort($sortArray[$orderby],SORT_ASC,$rows);
+                    break;
+                case 'descending':
+                    array_multisort($sortArray[$orderby],SORT_DESC,$rows);
+                    break;
+            }
+        }
+        $nbranks = $this->length;
+        $ranks = array();
+        foreach($rows as $row) {
+            $choiceid = $row->id;
+            foreach($choices as $choice) {
+                if ($choice->choiceid == $choiceid) {
+                    $n = 0;
+                    for ($i=0;$i<$nbranks;$i++){
+                        if ($choice->rank == $i) {
+                            $n++;
+                            if (!isset($ranks[$choice->content][$i])) {
+                                $ranks[$choice->content][$i] = 0;
+                            }
+                            $ranks[$choice->content][$i] += $n;
+                        }
+                    }
+                }
+            }
+        }
+    
+        // prepare settings for display
+        $strresp = '<div style="text-align:center">'.get_string('responses', 'questionnaire').'</div>';
+        $strtotal = '<strong>'.get_string('total', 'questionnaire').'</strong>';
+        $isna = $this->precise == 1;
+        $isnahead = '';
+        $osgood = false;
+        $nbchoices = count ($this->counts);
+        if ($precision == 3) { // Osgood's semantic differential
+            $osgood = true;
+        }
+        if ($isna) {
+            $isnahead = get_string('notapplicable', 'questionnaire').'<br />(#)';
+        }
+        // background color for even-number cell
+        $bg = 'c0';
+        if ($precision == 1) {
+            $na = get_string('notapplicable', 'questionnaire');
+        } else {
+            $na = '';
+        }
+        $colspan = $length + 1 + ($na !='') + $osgood;
+        $nameddegrees = 0;
+        $n = array();
+        $mods = array();
+        foreach ($this->choices as $cid => $choice) {
+            $content = $choice->content;
+            // check for number from 1 to 3 digits, followed by the equal sign = (to accomodate named degrees)
+            if (preg_match("/^([0-9]{1,3})=(.*)$/", $content,$ndd)) {
+                $n[$nameddegrees] = format_text($ndd[2], FORMAT_HTML);
+                $nameddegrees++;
+            }
+            else {
+                $contents = choice_values($content);
+                if ($contents->modname) {
+                    $choice->content = $contents->text;
+                }
+            }
+        }
+        
+        // if we have named degrees, provide for wider degree columns (than for numbers)
+        // do not provide wider degree columns if we have an Osgood's semantic differential
+        if ($nameddegrees || $osgood) {
+            $colwidth = 'auto';
+            $leftcolwidth = 'auto';
+        } else {
+            $colwidth = '40px';
+            $leftcolwidth = '55%';
+        }
+    
+        // display begins here (old HTML style)
+        echo '<table class="generaltable likertresp" width="100%" border="0" cellspacing="1" cellpadding="0">';
+        echo '<td class="header" width="'.$leftcolwidth.'"></td><td colspan="'.$colspan.'" style="text-align:center;font-weight:bold;" class="header">'.$strresp.'</td>';
+        echo '<tbody>';
+        echo '<tr>';
+        echo '<td></td>';
+    
+        // display the column titles
+        for ($j = 0; $j < $this->length; $j++) {
+            if (isset($n[$j])) {
+                $str = $n[$j];
+            } else {
+                $str = $j+1;
+            }
+            echo '<td style="width:'.$colwidth.'; text-align:center; font-weight:bold;" class="'.$bg.'">'.$str.'</td>';
+            $bg = ($bg == 'c0' ? 'c1' : 'c0');
+        }
+        if (!$osgood) {
+            echo '<td style="width:'.$colwidth.'; text-align:center;" class="'.$bg.'">'.$strtotal.'</td>';
+        } else {
+            echo '<td></td><td style="width:'.$colwidth.'; text-align:center;" class="'.$bg.'">'.$strtotal.'</td>';
+        }
+        if ($na) {
+            echo '<td style="width:'.$colwidth.'; text-align:center;" class="'.$bg.'">'.$na.'</td>';
+        }
+        echo '</tr>';
+    
+        // now display the responses
+        foreach($ranks as $content => $rank) {
+            // eliminate potential named degrees on Likert scale
+            if (!preg_match("/^[0-9]{1,3}=/", $content)) {
+
+                // first display the list of degrees (named or un-named)
+                // number of NOT AVAILABLE responses for this possible answer
+                $nbna = $this->counts[$content]->nbna;
+                // TOTAL number of responses for this possible answer
+                $total = $this->counts[$content]->num;
+                $nbresp = '<strong>'.$total.'<strong>';
+                // background color for odd-number cell
+                $bg = 'c1';
+                if ($osgood) {
+                    list($content, $contentright) = preg_split('/[|]/', $content);
+                    echo '<td style="text-align:right;">'.format_text($content, FORMAT_HTML).'&nbsp;</td>';
+                } else {
+                    // eliminate potentially short-named choices
+                    $contents = choice_values($content);
+                    if ($contents->modname) {
+                        $content = $contents->text;
+                    }
+                    echo '<td>'.format_text($content, FORMAT_HTML).'&nbsp;</td>';
+                }
+        
+                // display ranks/rates numbers
+                $maxrank = max($rank);
+                for ($i = 0; $i <= $length - 1; $i++) {
+                    $percent = '';
+                    $bg = ($bg == 'c0' ? 'c1' : 'c0');
+                    if (isset($rank[$i])) {
+                        $str = $rank[$i];
+                        if ($total !== 0 && $str !==0) {
+                            $percent = ' (<span class="percent">'.number_format(($str * 100) / $total).'%</span>)';
+                        }
+                        // emphasize responses with max rank value
+                        if ($str == $maxrank) {
+                            $str = '<strong>'.$str.'</strong>';
+                        }
+                    } else {
+                        $str = 0;
+                    }
+                    
+                    echo '<td align = "center" class="'.$bg.'">'.$str.$percent.'</td>';
+                }
+        
+                $bg = ($bg == 'c0' ? 'c1' : 'c0');
+                if (!$osgood) {
+                    echo'<td align = "center" class="'.$bg.'">'.$nbresp.'</td>';
+                    if ($na) {
+                        $bg = ($bg == 'c0' ? 'c1' : 'c0');
+                        echo '<td style="width:40px; text-align:center" class="'.$bg.'">';
+                        echo $nbna.'</td>';
+                    }
+                } else {
+                    $bg = ($bg == 'c0' ? 'c1' : 'c0');
+                    echo '<td class="'.$bg.'">&nbsp;'.format_text($contentright, FORMAT_HTML).'</td>'.
+                                    '<td align = "center" class="'.$bg.'">'.$nbresp.'</td>';
+                }
+                echo '</tr>';
+            }// end named degrees
+        }
+        echo '</tbody></table>';
+    }
+    
     /* {{{ proto void mkresrank(array weights, int total, int precision, bool show_totals)
        Builds HTML showing RANK results. */
     function mkresrank($total, $precision, $showTotals) {
