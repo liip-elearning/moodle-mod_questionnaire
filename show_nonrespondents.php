@@ -177,12 +177,10 @@ $tablecolumns = array('userpic', 'fullname');
 $extrafields = get_extra_user_fields($context);
 $tableheaders = array(get_string('userpic'), get_string('fullnameuser'));
 
-// JR DEV removed for my test site
 foreach ($extrafields as $field) {
     $tablecolumns[] = $field;
     $tableheaders[] = get_user_field_name($field);
 }
-
 if (!isset($hiddenfields['city'])) {
     $tablecolumns[] = 'city';
     $tableheaders[] = get_string('city');
@@ -199,7 +197,6 @@ if ($resume) {
     $tablecolumns[] = 'status';
     $tableheaders[] = get_string('status');
 }
-// JR DEV removed for my test site
 if (has_capability('moodle/course:bulkmessaging', $coursecontext)) {
     $tablecolumns[] = 'select';
     $tableheaders[] = get_string('select');
@@ -295,14 +292,11 @@ if (!$students) {
             $profile_url = $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id;
             $profilelink = '<strong><a href="'.$profile_url.'">'.fullname($user).'</a></strong>';
             $data = array ($OUTPUT->user_picture($user, array('courseid'=>$course->id)), $profilelink);
-    
-            // JR DEV removed for my test site
             if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
                             has_capability('moodle/course:viewhiddenuserfields', $context) or
                             in_array('email', $extrafields)) {
                 $data[] = $user->email;
             }
-    
             if (!isset($hiddenfields['city'])) {
                 $data[] = $user->city;
             }
@@ -327,10 +321,7 @@ if (!$students) {
                     $checkboxvalue = 0;
                 }
             }
-            
-            // JR DEV removed for my test site
             $data[] = '<input type="checkbox" class="usercheckbox" name="messageuser[]" value="'.$user->id.'" />';
-            //$data[] = '<input type="checkbox" class="usercheckbox" name="user'.$user->id.'" value="'.$checkboxvalue.'" />';
             $table->add_data($data);
         }
     
@@ -389,12 +380,10 @@ if (!$students) {
         //include the needed js
         $module = array('name'=>'mod_questionnaire', 'fullpath'=>'/mod/questionnaire/questionnaire.js');
         $PAGE->requires->js_init_call('M.mod_questionnaire.init_sendmessage', null, false, $module);
-        
-        /// JR DEV removed for my test site END
     }
 }
-echo $OUTPUT->box_end();
-echo $OUTPUT->box_end();
+echo $OUTPUT->box_end(); // left-align
+echo $OUTPUT->box_end(); // generalbox boxaligncenter boxwidthwide
 
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////
