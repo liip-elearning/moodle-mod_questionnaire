@@ -322,7 +322,7 @@ function xmldb_questionnaire_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2010110101, 'questionnaire');
     }
     
-    if ($oldversion < 2012071901) {
+    if ($oldversion < 2012092801) {
         /// skip logic feature JR proof of concept
         /// Define field dependquestion to be added to questionnaire_question table
         $table = new xmldb_table('questionnaire_question');
@@ -342,7 +342,7 @@ function xmldb_questionnaire_upgrade($oldversion=0) {
         }
         
         // savepoint reached
-        upgrade_plugin_savepoint(true, 2012071901,  'questionnaire');
+        upgrade_plugin_savepoint(true, 2012092801,  'questionnaire');
     }
     return $result;
 }
