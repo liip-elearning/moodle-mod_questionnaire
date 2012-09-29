@@ -342,7 +342,7 @@ function xmldb_questionnaire_upgrade($oldversion=0) {
         }
         
         // savepoint reached
-        upgrade_plugin_savepoint(true, 2012092801,  'questionnaire');
+        upgrade_mod_savepoint(true, 2012092801,  'questionnaire');
     }
     return $result;
 }
