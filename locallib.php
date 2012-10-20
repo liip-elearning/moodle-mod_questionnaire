@@ -1951,6 +1951,8 @@ class questionnaire {
                     // convert date from yyyy-mm-dd database format to actual questionnaire dateformat
                     // does not work with dates prior to 1900 under Windows
                         if (preg_match('/\d\d\d\d-\d\d-\d\d/', $val)) {
+                            $dateparts = preg_split('/-/', $val);
+                            $val = make_timestamp($dateparts[0], $dateparts[1], $dateparts[2]); // Unix timestamp                            
                             $val = userdate ( $val, $dateformat);
                             $newrow[] = $val;
                         }
