@@ -2232,7 +2232,7 @@ class questionnaire {
             $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&amp;sid='.$this->survey->id.'&byresponse=1';
             echo '<div style="text-align:center;padding-bottom:10px; padding-top:10px;">'.
                             implode(' | ', $linkarr);
-            echo '<br /><b><<< <a href="'.$url.'">'.get_string('backtorespondentslist', 'questionnaire').'</a>&nbsp;|&nbsp;</b>'.'</div>';
+            echo '<br /><b><<< <a href="'.$url.'">'.get_string('backtorespondentslist', 'questionnaire').'</a></b>'.'</div>';
     
         } else { //display respondents list
             $userfullname = '';
