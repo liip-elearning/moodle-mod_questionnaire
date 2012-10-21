@@ -283,7 +283,7 @@ class questionnaire {
         $this->print_survey_start('', 1, 1, 0, $rid, $blankquestionnaire);
 
         $data = new Object();
-        $i = 1;
+        $i = 0;
         if (!$blankquestionnaire) {
             $this->response_import_all($rid, $data);
         }
@@ -302,7 +302,10 @@ class questionnaire {
         }
         foreach ($this->questions as $question) {
             if ($question->type_id < QUESPAGEBREAK) {
-                $question->response_display($data, $i++);
+                $i++;
+                if (array_key_exists('q'.$question->id, $data) || $question->dependquestion == 0) {  
+                    $question->response_display($data, $i);
+                }
             }
         }
 
