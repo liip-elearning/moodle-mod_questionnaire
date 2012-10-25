@@ -90,7 +90,7 @@ if ($action == 'cannotsendmessage') {
     redirect($url, $msg, 4);
     exit;
 }
-if ($action == 'sendmessage' /* AND has_capability('moodle/course:bulkmessaging', $coursecontext) */) {
+if ($action == 'sendmessage') {
     
     $shortname = format_string($course->shortname,
                             true,
@@ -311,17 +311,18 @@ if (!$students) {
             $data[] = $lastaccess;
             
             // if questionnaire is set to "resume", look for saved (not completed) responses
-            $checkboxvalue = '';
+            // we use the alt attribute of the checkboxes to store the started/not started value!
+            $checkboxaltvalue = '';
             if ($resume) {
                 if ($DB->get_record('questionnaire_response', array('survey_id'=>$sid, 'username'=>$student, 'complete'=>'n')) ) {
                     $data[] = get_string('started', 'questionnaire');
-                    $checkboxvalue = 1;                
+                    $checkboxaltvalue = 1;                
                 } else {
                     $data[] = get_string('not_started', 'questionnaire');
-                    $checkboxvalue = 0;
+                    $checkboxaltvalue = 0;
                 }
             }
-            $data[] = '<input type="checkbox" class="usercheckbox" name="messageuser[]" value="'.$user->id.'" />';
+            $data[] = '<input type="checkbox" class="usercheckbox" name="messageuser[]" value="'.$user->id.'" alt="'.$checkboxaltvalue.'" />';
             $table->add_data($data);
         }
     

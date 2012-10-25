@@ -24,7 +24,7 @@ M.mod_questionnaire.init_sendmessage = function(Y) {
 
     Y.on('click', function(e) {
         Y.all('input.usercheckbox').each(function() {
-            if (this.get('value') == 0) {
+            if (this.get('alt') == 0) {
                 this.set('checked', 'checked');
             } else {
             	this.set('checked', '');
@@ -34,7 +34,7 @@ M.mod_questionnaire.init_sendmessage = function(Y) {
 
     Y.on('click', function(e) {
         Y.all('input.usercheckbox').each(function() {
-            if (this.get('value') == 1) {
+            if (this.get('alt') == 1) {
                 this.set('checked', 'checked');
             } else {
             	this.set('checked', '');
