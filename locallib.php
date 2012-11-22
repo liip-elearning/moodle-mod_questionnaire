@@ -303,7 +303,7 @@ class questionnaire {
         foreach ($this->questions as $question) {
             if ($question->type_id < QUESPAGEBREAK) {
                 $i++;
-                if (array_key_exists('q'.$question->id, $data) || $question->dependquestion == 0) {  
+                if (array_key_exists('q'.$question->id, $data) || $question->dependquestion == 0) {
                     $question->response_display($data, $i);
                 }
             }
@@ -311,7 +311,7 @@ class questionnaire {
 
         // display response analysis at bottom of responses too
         if ($is_response_analysis) {
-            $this->response_analysis($rid, $thank_head, $thank_body);            
+            $this->response_analysis($rid, $thank_head, $thank_body);
         }
 
         $this->print_survey_end(1, 1);
@@ -323,7 +323,7 @@ class questionnaire {
     *
     */
     function view_all_responses($resps) {
-        global $CFG, $QTYPENAMES, $OUTPUT;
+        global $QTYPENAMES, $OUTPUT;
         echo $OUTPUT->box_start();
         $this->print_survey_start('', 1, 1, 0);
 
@@ -544,7 +544,7 @@ class questionnaire {
 /// Display Methods
 
     function print_survey($userid=false, $quser) {
-        global $USER, $PAGE, $CFG;
+        global $CFG;
 
         $formdata = new stdClass();
         if (data_submitted() && confirm_sesskey()) {
@@ -574,14 +574,14 @@ class questionnaire {
 
         if(!empty($formdata->resume) && ($this->resume)) {
             $this->response_delete($formdata->rid, $formdata->sec);
-            $formdata->rid = $this->response_insert($this->survey->id, $formdata->sec, $formdata->rid, $quser, $formdata);
+            $formdata->rid = $this->response_insert($this->survey->id, $formdata->sec, $formdata->rid, $quser);
             $this->response_goto_saved($action);
             return;
         }
  // JR save each section 's $formdata somewhere in case user returns to that page when navigating the questionnaire...
         if(!empty($formdata->next)) {
             $this->response_delete($formdata->rid, $formdata->sec);
-            $formdata->rid = $this->response_insert($this->survey->id, $formdata->sec, $formdata->rid, $quser, $formdata);
+            $formdata->rid = $this->response_insert($this->survey->id, $formdata->sec, $formdata->rid, $quser);
             $msg = $this->response_check_format($formdata->sec, $formdata);
             if ( $msg ) {
                 $formdata->next = '';
@@ -602,7 +602,7 @@ class questionnaire {
         }
         if (!empty($formdata->prev) && ($this->navigate)) {
             $this->response_delete($formdata->rid, $formdata->sec);
-            $formdata->rid = $this->response_insert($this->survey->id, $formdata->sec, $formdata->rid, $quser, $formdata);
+            $formdata->rid = $this->response_insert($this->survey->id, $formdata->sec, $formdata->rid, $quser);
             $msg = $this->response_check_format($formdata->sec, $formdata);
             if ( $msg ) {
                 $formdata->prev = '';
@@ -716,7 +716,7 @@ class questionnaire {
                 echo '<input type="submit" name="resume" value="'.get_string('save', 'questionnaire').'" />';
             }
         //  Add a 'hidden' variable for the mod's 'view.php', and use a language variable for the submit button.
-           
+
             if ($formdata->sec > $num_sections) {
                 $formdata->sec = $num_sections;
             }
@@ -741,7 +741,7 @@ class questionnaire {
     }
 
     function survey_render($section = 1, $message = '', &$formdata) {
-        global $DB;
+
         $this->usehtmleditor = null;
 
         if(empty($section)) {
@@ -760,7 +760,7 @@ class questionnaire {
         $i = 0;
         if ($section > 1) {
         	for($j = 2; $j<=$section; $j++) {
-                foreach ($this->questionsbysec[$j-1] as $question) {                   
+                foreach ($this->questionsbysec[$j-1] as $question) {
                     if ($question->type_id < 99) {
                         $i++;
                     }
@@ -1041,7 +1041,6 @@ class questionnaire {
 
         // make copies of all the questions
         $pos=1;
-        $question_record = new Object();
         $qid_array = array();
         $cid_array = array();
         foreach ($this->questions as $question) {
@@ -1071,10 +1070,10 @@ class questionnaire {
             }
         }
         // JR skip logic feature :: now we need to set the new values for dependencies
-        if ($newquestions = $DB->get_records('questionnaire_question', array('survey_id' => $new_sid), 'id')) {           
+        if ($newquestions = $DB->get_records('questionnaire_question', array('survey_id' => $new_sid), 'id')) {
             foreach ($newquestions as $question) {
-                if ($question->dependquestion != 0) {        
-                    $dependqtypeid = $this->questions[$question->dependquestion]->type_id; 
+                if ($question->dependquestion != 0) {
+                    $dependqtypeid = $this->questions[$question->dependquestion]->type_id;
                     $record = new object;
                     $record->id = $question->id;
                     $record->dependquestion = $qid_array[$question->dependquestion];
@@ -1084,7 +1083,7 @@ class questionnaire {
                     $DB->update_record('questionnaire_question', $record);
                 }
             }
-        }        
+        }
         return($new_sid);
     }
 
@@ -1117,7 +1116,7 @@ class questionnaire {
     // ---- RESPONSE LIBRARY
 
     function response_check_format($section, &$formdata, $qnum='') {
-        
+
         // skip logic
         $num_sections = isset($this->questionsbysec) ? count($this->questionsbysec) : 0;
         $section = min($num_sections , $section);
@@ -1955,7 +1954,7 @@ class questionnaire {
                     // does not work with dates prior to 1900 under Windows
                         if (preg_match('/\d\d\d\d-\d\d-\d\d/', $val)) {
                             $dateparts = preg_split('/-/', $val);
-                            $val = make_timestamp($dateparts[0], $dateparts[1], $dateparts[2]); // Unix timestamp                            
+                            $val = make_timestamp($dateparts[0], $dateparts[1], $dateparts[2]); // Unix timestamp
                             $val = userdate ( $val, $dateformat);
                             $newrow[] = $val;
                         }
@@ -1980,13 +1979,13 @@ class questionnaire {
             $thank_url = $result->thanks_page;
             $thank_head = $result->thank_head;
             $thank_body = $result->thank_body;
-            
+
             // TODO JR detect analysis in thank_body and calculate total(s) etc
             if ($this->survey->theme == 'totalscore' || $this->survey->theme == 'subscores') {
                 $this->response_analysis($rid, $thank_head, $thank_body);
                 $thank_head = '';
                 $thank_body = '';
-                
+
             }
         } else {
             $thank_url = '';
@@ -2130,122 +2129,6 @@ class questionnaire {
         echo implode(' | ', $linkarr);
     }
 
-    // ************************************************************************************************
-    // respondents list feature AUGUST 2012
-    function survey_results_navbar_alpha($curr_rid, $groupid, $cm, $byresponse) {
-        global $CFG, $DB;
-        $selectgroupid ='';
-        $gmuserid = ', GM.userid ';
-        $groupmembers = ', '.$CFG->prefix.'groups_members GM ';
-        switch ($groupid) {
-            case 0: // no groups
-            case -1: // all participants
-            case -3: // not members of any group
-                $gmuserid = '';
-                $groupmembers = '';
-                break;
-            case -2: // all members of any group
-                $selectgroupid = ' AND GM.groupid>0 AND R.username = GM.userid ';
-                break;
-            default: // members of a specific group
-                $selectgroupid = ' AND GM.groupid='.$groupid.' AND R.username = GM.userid ';
-        }
-    
-        $sql = 'SELECT R.id AS responseid, R.submitted AS submitted, R.username, U.username AS username, U.id AS user, U.lastname, U.firstname '.$gmuserid.
-        'FROM '.$CFG->prefix.'questionnaire_response R,
-        '.$CFG->prefix.'user U
-        '.$groupmembers.
-        'WHERE R.survey_id='.$this->survey->id.
-        ' AND complete = \'y\''.
-        ' AND U.id = R.username '.
-        $selectgroupid.
-        'ORDER BY U.lastname, U.firstname, R.submitted DESC';
-        if (!$responses = $DB->get_records_sql($sql)) {
-            return;
-        }
-        if ($groupid == -3) { // not members of any group
-            foreach ($responses as $resp=>$key) {
-                $userid = $key->user;
-                if (groups_has_membership($cm, $userid)) {
-                    unset($responses[$resp]);
-                }
-            }
-        }
-        $total = count($responses);
-        if ($total === 0) {
-            return;
-        }
-        $rids = array();
-        $ridssub = array();
-        $ridsusername = array();
-        $ridsfirstname = array();
-        $ridslastname = array();
-        $i = 0;
-        $curr_pos = -1;
-        foreach ($responses as $response) {
-            array_push($rids, $response->responseid);
-            array_push($ridssub, $response->submitted);
-            array_push($ridsusername, $response->username);
-            array_push($ridsfirstname, $response->firstname);
-            array_push($ridslastname, $response->lastname);
-            if ($response->responseid == $curr_rid) {
-                $curr_pos = $i;
-            }
-            $i++;
-        }
-    
-        $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&amp;sid='.$this->survey->id.'&currentgroupid='.$groupid;
-        $linkarr = array();
-        if (!$byresponse) { // display single response + navbar
-            $prev_rid = ($curr_pos > 0) ? $rids[$curr_pos - 1] : null;
-            $next_rid = ($curr_pos < $total - 1) ? $rids[$curr_pos + 1] : null;
-            $first_rid = $rids[0];
-            $last_rid = $rids[$total - 1];
-            $display_pos = 1;
-            if ($prev_rid != null) {
-                $pos = $curr_pos - 1;
-                $userfullname = $ridsfirstname[$pos].' '.$ridslastname[$pos];
-                $responsedate = userdate($ridssub[$pos]);
-                $title = $userfullname;
-                if ($ridsusername[$pos] == $ridsusername[$curr_pos]) { // only add date if more than one response by a student
-                    $title .= ' | '.$responsedate;
-                }
-                $firstuserfullname = $ridsfirstname[0].' '.$ridslastname[0];
-                array_push($linkarr, '<b><<</b> <a href="'.$url.'&amp;rid='.$first_rid.'" title="'.$firstuserfullname.'">'.
-                    get_string('firstrespondent','questionnaire').'</a>');
-                array_push($linkarr, '<b><&nbsp;</b><a href="'.$url.'&amp;rid='.$prev_rid.'" title="'.$title.'">'.get_string('previous').'</a>');
-            }
-            array_push($linkarr, '<b>'.($curr_pos + 1).' / '.$total.'</b>');
-            if ($next_rid != null) {
-                $pos = $curr_pos + 1;
-                $userfullname = $ridsfirstname[$pos].' '.$ridslastname[$pos];
-                $responsedate = userdate($ridssub[$pos]);
-                $title = $userfullname;
-                if ($ridsusername[$pos] == $ridsusername[$curr_pos]) { // only add date if more than one response by a student
-                    $title .= ' | '.$responsedate;
-                }
-                $lastuserfullname = $ridsfirstname[$total - 1].' '.$ridslastname[$total - 1];
-                array_push($linkarr, '<a href="'.$url.'&amp;rid='.$next_rid.'" title="'.$title.'">'.get_string('next').'</a>&nbsp;<b>></b>');
-                array_push($linkarr, '<a href="'.$url.'&amp;rid='.$last_rid.'"  title="'.$lastuserfullname .'">'.
-                    get_string('lastrespondent','questionnaire').'</a>&nbsp;<b>>></b>');
-            }
-            $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&amp;sid='.$this->survey->id.'&byresponse=1';
-            echo '<div style="text-align:center;padding-bottom:10px; padding-top:10px;">'.
-                            implode(' | ', $linkarr);
-            echo '<br /><b><<< <a href="'.$url.'">'.get_string('backtorespondentslist', 'questionnaire').'</a></b>'.'</div>';
-    
-        } else { //display respondents list
-            $userfullname = '';
-            for ($i = 0; $i < $total; $i++) {
-                $userfullname = $ridsfirstname[$i].' '.$ridslastname[$i];
-                $responsedate = userdate($ridssub[$i]);
-                array_push($linkarr, '<a title = "'.$responsedate.'" href="'.$url.'&amp;rid='.$rids[$i].'" >'.$userfullname.'</a>');
-            }
-            echo '<div class="respondentstable">'.implode('<br />', $linkarr).'</div>';
-        }
-    }
-    // ************ end individual respondents list feature ************************************************************************************
-
     function survey_results_navbar_student($curr_rid, $userid, $instance, $resps, $reporttype='myreport', $sid='') {
         global $DB;
 
@@ -2311,6 +2194,122 @@ class questionnaire {
         }
         echo implode(' | ', $linkarr);
     }
+
+    // ************************************************************************************************
+    // respondents list feature AUGUST 2012
+    function survey_results_navbar_alpha($curr_rid, $groupid, $cm, $byresponse) {
+        global $CFG, $DB;
+        $selectgroupid ='';
+        $gmuserid = ', GM.userid ';
+        $groupmembers = ', '.$CFG->prefix.'groups_members GM ';
+        switch ($groupid) {
+            case 0: // no groups
+            case -1: // all participants
+            case -3: // not members of any group
+                $gmuserid = '';
+                $groupmembers = '';
+                break;
+            case -2: // all members of any group
+                $selectgroupid = ' AND GM.groupid>0 AND R.username = GM.userid ';
+                break;
+            default: // members of a specific group
+                $selectgroupid = ' AND GM.groupid='.$groupid.' AND R.username = GM.userid ';
+        }
+
+        $sql = 'SELECT R.id AS responseid, R.submitted AS submitted, R.username, U.username AS username, U.id AS user, U.lastname, U.firstname '.$gmuserid.
+        'FROM '.$CFG->prefix.'questionnaire_response R,
+        '.$CFG->prefix.'user U
+        '.$groupmembers.
+        'WHERE R.survey_id='.$this->survey->id.
+        ' AND complete = \'y\''.
+        ' AND U.id = R.username '.
+        $selectgroupid.
+        'ORDER BY U.lastname, U.firstname, R.submitted DESC';
+        if (!$responses = $DB->get_records_sql($sql)) {
+            return;
+        }
+        if ($groupid == -3) { // not members of any group
+            foreach ($responses as $resp=>$key) {
+                $userid = $key->user;
+                if (groups_has_membership($cm, $userid)) {
+                    unset($responses[$resp]);
+                }
+            }
+        }
+        $total = count($responses);
+        if ($total === 0) {
+            return;
+        }
+        $rids = array();
+        $ridssub = array();
+        $ridsusername = array();
+        $ridsfirstname = array();
+        $ridslastname = array();
+        $i = 0;
+        $curr_pos = -1;
+        foreach ($responses as $response) {
+            array_push($rids, $response->responseid);
+            array_push($ridssub, $response->submitted);
+            array_push($ridsusername, $response->username);
+            array_push($ridsfirstname, $response->firstname);
+            array_push($ridslastname, $response->lastname);
+            if ($response->responseid == $curr_rid) {
+                $curr_pos = $i;
+            }
+            $i++;
+        }
+
+        $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&amp;sid='.$this->survey->id.'&currentgroupid='.$groupid;
+        $linkarr = array();
+        if (!$byresponse) { // display single response + navbar
+            $prev_rid = ($curr_pos > 0) ? $rids[$curr_pos - 1] : null;
+            $next_rid = ($curr_pos < $total - 1) ? $rids[$curr_pos + 1] : null;
+            $first_rid = $rids[0];
+            $last_rid = $rids[$total - 1];
+            $display_pos = 1;
+            if ($prev_rid != null) {
+                $pos = $curr_pos - 1;
+                $userfullname = $ridsfirstname[$pos].' '.$ridslastname[$pos];
+                $responsedate = userdate($ridssub[$pos]);
+                $title = $userfullname;
+                if ($ridsusername[$pos] == $ridsusername[$curr_pos]) { // only add date if more than one response by a student
+                    $title .= ' | '.$responsedate;
+                }
+                $firstuserfullname = $ridsfirstname[0].' '.$ridslastname[0];
+                array_push($linkarr, '<b><<</b> <a href="'.$url.'&amp;rid='.$first_rid.'" title="'.$firstuserfullname.'">'.
+                    get_string('firstrespondent','questionnaire').'</a>');
+                array_push($linkarr, '<b><&nbsp;</b><a href="'.$url.'&amp;rid='.$prev_rid.'" title="'.$title.'">'.get_string('previous').'</a>');
+            }
+            array_push($linkarr, '<b>'.($curr_pos + 1).' / '.$total.'</b>');
+            if ($next_rid != null) {
+                $pos = $curr_pos + 1;
+                $userfullname = $ridsfirstname[$pos].' '.$ridslastname[$pos];
+                $responsedate = userdate($ridssub[$pos]);
+                $title = $userfullname;
+                if ($ridsusername[$pos] == $ridsusername[$curr_pos]) { // only add date if more than one response by a student
+                    $title .= ' | '.$responsedate;
+                }
+                $lastuserfullname = $ridsfirstname[$total - 1].' '.$ridslastname[$total - 1];
+                array_push($linkarr, '<a href="'.$url.'&amp;rid='.$next_rid.'" title="'.$title.'">'.get_string('next').'</a>&nbsp;<b>></b>');
+                array_push($linkarr, '<a href="'.$url.'&amp;rid='.$last_rid.'"  title="'.$lastuserfullname .'">'.
+                    get_string('lastrespondent','questionnaire').'</a>&nbsp;<b>>></b>');
+            }
+            $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&amp;sid='.$this->survey->id.'&byresponse=1';
+            echo '<div style="text-align:center;padding-bottom:10px; padding-top:10px;">'.
+                            implode(' | ', $linkarr);
+            echo '<br /><b><<< <a href="'.$url.'">'.get_string('backtorespondentslist', 'questionnaire').'</a></b>'.'</div>';
+
+        } else { //display respondents list
+            $userfullname = '';
+            for ($i = 0; $i < $total; $i++) {
+                $userfullname = $ridsfirstname[$i].' '.$ridslastname[$i];
+                $responsedate = userdate($ridssub[$i]);
+                array_push($linkarr, '<a title = "'.$responsedate.'" href="'.$url.'&amp;rid='.$rids[$i].'" >'.$userfullname.'</a>');
+            }
+            echo '<div class="respondentstable">'.implode('<br />', $linkarr).'</div>';
+        }
+    }
+    // ************ end individual respondents list feature ************************************************************************************
 
     /* {{{ proto string survey_results(int survey_id, int precision, bool show_totals, int question_id, array choice_ids, int response_id)
         Builds HTML for the results for the survey. If a
@@ -3045,14 +3044,14 @@ class questionnaire {
             $DB->set_field('questionnaire_question', 'position', $movetopos, array('id' => $moveqid));
         }
     }
-    
+
     function response_analysis ($rid, $thank_head, $thank_body, $validation=0) {
         global $DB, $CFG;
 
         $maxtotalscore = 0;
         $totalscore = 0;
         $maxsubscore = 0;
-        
+
         // array with question id and question position
         $i = 0;
         $qpos = array();
@@ -3089,10 +3088,10 @@ class questionnaire {
             return;
         }
         $q = array();
-        $i=1;        
+        $i=1;
         $responses = $this->response_select($rid, 'type_id');
         foreach($responses as $qid => $response) {
-            
+
             $qtype = $response[0];
             $score = '';
             switch ($qtype) {
@@ -3115,7 +3114,7 @@ class questionnaire {
                     if ($value = $DB->get_records_sql($sql)) {
                         $score = key($value);
                     }
-                    // 
+                    //
                     if (isset($q[$qid1][1])) {
                         $i++;
                         $q[$qid1][$i] = $score;
@@ -3141,11 +3140,11 @@ class questionnaire {
             $qqq[$pos.$cid]['qtype'] = $qpos[$qid]['qtype'];
         }
         $q = $qqq;
-       
+
         $analysis = explode("\n",$thank_body);
-         
+
         echo "<hr /><h4>$thank_head</h4><br />";
-        
+
         // TODO move response analysis type from "theme" to more relevant "analysis_type" field
         switch($this->survey->theme) {
 
@@ -3168,7 +3167,7 @@ class questionnaire {
                     }
                     $i++;
                 }
-            
+
             // analysis adds up individual questions scores
             case('subscores'):
                 $i = 0;
@@ -3195,7 +3194,7 @@ class questionnaire {
                             if ($qtype == 8 && !preg_match('/\$q(\[\d{1,2}\])\[\'score\'\](\[\d{1,2}\])/', $subscorecalc)) {
                                 $subscorecalc .= '[1]';
                             }
-                            
+
                             $ok=0;
                             eval('if(isset('.$subscorecalc.')){$ok=1;}');
                             if ($ok) {
@@ -3203,7 +3202,7 @@ class questionnaire {
                                     $subscore = $subscore.'+'.$subscorecalc;
                                 } else {
                                     $subscore = $subscorecalc;
-                                } 
+                                }
                             }
                         }
                         foreach($maxsubscorecalcs as $maxsubscorecalc) {
@@ -3222,7 +3221,7 @@ class questionnaire {
                             eval('$subscore = '.$subscore.';');
                             $subscorepercent = round($subscore/$maxsubscore*100);
                             $inversesubscorepercent = 100 - $subscorepercent;
-                              
+
                             $message = preg_replace('/"/', '\"', $analysis[$i+1]);
                             eval( "\$message = \"$message\";" );
                             echo $message.'<br>';
@@ -3230,7 +3229,7 @@ class questionnaire {
                             $subscore = null;
                             $maxsubscore = null;
                         }
-                    } 
+                    }
                     if (preg_match('/^if *\( *\$subscore/', $line) && $maxsubscore != null) {
                         $message = preg_replace('/"/', '\"', $analysis[$i+1]);
                         eval("$line {".
@@ -3406,7 +3405,7 @@ function questionnaire_response_key_cmp($l, $r) {
         $contents->modname = '';
         $contents->title = '';
         // has image
-        // TODO JR added .*> to the end of regular expression pattern 06 AUG 2012 
+        // TODO JR added .*> to the end of regular expression pattern 06 AUG 2012
         if ($count = preg_match('/(<img)\s .*(src="(.[^"]{1,})").*>/isxmU',$content,$matches)) {
             $contents->image = $matches[0];
             $imageurl = $matches[3];
@@ -3428,12 +3427,12 @@ function questionnaire_response_key_cmp($l, $r) {
             }
         }
         // look for named modalities
-        
+
         // TODO jr check for score value first
         $r = preg_match_all("/^(\d{1,2}=)(.*)$/", $content, $matches);
         if ($r) {
             $content = $matches[2][0];
-        }      
+        }
 
         $contents->text = $content;
         if ($pos = strpos($content, '=')) {
@@ -3446,12 +3445,12 @@ function questionnaire_response_key_cmp($l, $r) {
          }
         return $contents;
     }
-    
+
     // // DEV JR skip logic feature :: we need to find out how many questions will actually be displayed on next page/section
     function nb_questions_on_page ($questionsinquestionnaire, $questionsinsection, $rid) {
         global $DB;
         $nbqonpage = 0;
-        
+
         foreach ($questionsinsection as $question) {
             if ($question->dependquestion != 0) {
                 switch ($questionsinquestionnaire[$question->dependquestion]->type_id) {
@@ -3478,11 +3477,11 @@ function questionnaire_response_key_cmp($l, $r) {
         }
         return $nbqonpage;
     }
-    
+
     function get_dependencies($questions, $position) {
         $dependencies = array();
         $dependencies[''][0] = get_string('choosedots');
-        
+
         foreach($questions as $question) {
             if (($question->type_id == QUESRADIO || $question->type_id == QUESDROP || $question->type_id == QUESYESNO) && $question->position < $position) {
     	        if (($question->type_id == QUESRADIO || $question->type_id == QUESDROP) && $question->name != '') {
@@ -3490,7 +3489,7 @@ function questionnaire_response_key_cmp($l, $r) {
     	                $contents = choice_values($choice->content);
     	                if ($contents->modname) {
     	                    $choice->content = $contents->modname;
-    	                }    	                
+    	                }
     	                $dependencies[$question->name][$question->id.','.$key] = $question->name.'->'.$choice->content;
     	            }
     	        }
@@ -3500,9 +3499,9 @@ function questionnaire_response_key_cmp($l, $r) {
     	        }
             }
         }
-        return $dependencies;   
+        return $dependencies;
     }
-        
+
     function check_dependencies ($sid) {
         global $DB;
         // we need to load freshly updated questions from current questionnaire
@@ -3513,7 +3512,7 @@ function questionnaire_response_key_cmp($l, $r) {
                 if ($questions[$dependquestion]->position > $question->position || $questions[$dependquestion]->deleted == 'y') {
                     $DB->set_field('questionnaire_question', 'dependquestion', 0, array('id' => $question->id));
                     $DB->set_field('questionnaire_question', 'dependchoice', 0, array('id' =>  $question->id));
-                } 
-            } 
+                }
+            }
         }
     }

@@ -29,7 +29,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class questionnaire_settings_form extends moodleform {
 
     function definition() {
-        global $CFG, $COURSE, $questionnaire, $QUESTIONNAIRE_REALMS;
+        global $questionnaire, $QUESTIONNAIRE_REALMS;
 
         $mform    =& $this->_form;
 
@@ -123,7 +123,7 @@ class questionnaire_settings_form extends moodleform {
     }
 
     function validation($data, $files){
-        global $CFG, $questionnaire;
+        global $questionnaire;
         // check validity of data analysis expressions used for $totalscore and $subscores
         $errors = parent::validation($data, '');
         $errors['thank_body'] = '';
