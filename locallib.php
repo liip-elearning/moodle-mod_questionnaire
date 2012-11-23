@@ -123,7 +123,7 @@ class questionnaire {
             foreach ($records as $record) {
                 $this->questions[$record->id] = new questionnaire_question(0, $record, $this->context);
                 if ($record->type_id != 99) {
-                    $this->questionsbysec[$sec][$record->id] = $this->questions[$record->id]; //removed &
+                    $this->questionsbysec[$sec][$record->id] = &$this->questions[$record->id];
                     $isbreak = false;
                 } else {
                     // sanity check: no section break allowed as first position, no 2 consecutive section breaks
@@ -588,7 +588,7 @@ class questionnaire {
             } else {
                 $formdata->sec++;
                 // DEV JR skip logic feature
-                $nbquestionsonpage = nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
+                $nbquestionsonpage = questionnaire_nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
                 // TODO JR... what if no questions left ??? DISPLAY Submit Questionnaire button TODO TODO TODO
                 while ($nbquestionsonpage == 0) {
                     $formdata->sec++;
@@ -596,7 +596,7 @@ class questionnaire {
                     if ($formdata->sec > $num_sections) {
                         break;
                     }
-                    $nbquestionsonpage = nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
+                    $nbquestionsonpage = questionnaire_nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
                 }
             }
         }
@@ -609,10 +609,10 @@ class questionnaire {
             } else {
                 $formdata->sec--;
                 // DEV JR skip logic feature
-                $nbquestionsonpage = nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
+                $nbquestionsonpage = questionnaire_nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
                 while ($nbquestionsonpage == 0) {
                     $formdata->sec--;
-                    $nbquestionsonpage = nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
+                    $nbquestionsonpage = questionnaire_nb_questions_on_page($this->questions, $this->questionsbysec[$formdata->sec], $formdata->rid);
                 }
             }
         }
@@ -759,7 +759,7 @@ class questionnaire {
     // find out what question number we are on $i New fix for question numbering
         $i = 0;
         if ($section > 1) {
-        	for($j = 2; $j<=$section; $j++) {
+            for($j = 2; $j<=$section; $j++) {
                 foreach ($this->questionsbysec[$j-1] as $question) {
                     if ($question->type_id < 99) {
                         $i++;
@@ -1269,7 +1269,7 @@ class questionnaire {
             case 9: // Date
                 $checkdateresult = '';
                 if ($formdata->{'q'.$qid} != '') {
-                    $checkdateresult = check_date($formdata->{'q'.$qid});
+                    $checkdateresult = questionnaire_check_date($formdata->{'q'.$qid});
                 }
                 if (substr($checkdateresult,0,5) == 'wrong') {
                     $wrongformat++;
@@ -1662,7 +1662,7 @@ class questionnaire {
                     $qrecords = $DB->get_records('questionnaire_quest_choice', array('question_id' => $qid));
                     foreach($qrecords as $value) {
                         if ($value->id == $cid) {
-                            $contents = choice_values($value->content);
+                            $contents = questionnaire_choice_values($value->content);
                             if ($contents->modname) {
                                 $row->ccontent = $contents->modname;
                             } else {
@@ -1740,7 +1740,7 @@ class questionnaire {
                             if (preg_match('/^!other/', $c2)) {
                                 $otherend = true;
                             } else {
-                                $contents = choice_values($c2);
+                                $contents = questionnaire_choice_values($c2);
                                 if ($contents->modname) {
                                     $c2 = $contents->modname;
                                 } elseif ($contents->title) {
@@ -1888,18 +1888,18 @@ class questionnaire {
                         if ($key == 'ccontent') {
                             if ($osgood) {
                                 list($contentleft, $contentright) = preg_split('/[|]/', $val);
-                                $contents = choice_values($contentleft);
+                                $contents = questionnaire_choice_values($contentleft);
                                 if ($contents->title) {
                                     $contentleft = $contents->title;
                                 }
-                                $contents = choice_values($contentright);
+                                $contents = questionnaire_choice_values($contentright);
                                 if ($contents->title) {
                                     $contentright = $contents->title;
                                 }
                                 $val = strip_tags($contentleft.'|'.$contentright);
                                 $val = preg_replace("/[\r\n\t]/", ' ', $val);
                             } else {
-                                $contents = choice_values($val);
+                                $contents = questionnaire_choice_values($val);
                                 if ($contents->modname) {
                                     $val = $contents->modname;
                                 } elseif ($contents->title) {
@@ -2217,7 +2217,7 @@ class questionnaire {
         }
 
         $sql = 'SELECT R.id AS responseid, R.submitted AS submitted, R.username, U.username AS username, U.id AS user, U.lastname, U.firstname '.$gmuserid.
-        'FROM '.$CFG->prefix.'questionnaire_response R,
+        'FROM {questionnaire}_response R,
         '.$CFG->prefix.'user U
         '.$groupmembers.
         'WHERE R.survey_id='.$this->survey->id.
@@ -2684,7 +2684,7 @@ class questionnaire {
                                 $columns[][$qpos] = $col;
                                 array_push($types, '0');
                             }
-                            $contents = choice_values($content);
+                            $contents = questionnaire_choice_values($content);
                             if ($contents->modname) {
                                 $modality = $contents->modname;
                             } elseif ($contents->title) {
@@ -2712,18 +2712,18 @@ class questionnaire {
                             } else {
                                 if ($osgood) {
                                     list($contentleft, $contentright) = preg_split('/[|]/', $content);
-                                    $contents = choice_values($contentleft);
+                                    $contents = questionnaire_choice_values($contentleft);
                                     if ($contents->title) {
                                         $contentleft = $contents->title;
                                     }
-                                    $contents = choice_values($contentright);
+                                    $contents = questionnaire_choice_values($contentright);
                                     if ($contents->title) {
                                         $contentright = $contents->title;
                                     }
                                     $modality = strip_tags($contentleft.'|'.$contentright);
                                     $modality = preg_replace("/[\r\n\t]/", ' ', $modality);
                                 } else {
-                                    $contents = choice_values($content);
+                                    $contents = questionnaire_choice_values($content);
                                     if ($contents->modname) {
                                         $modality = $contents->modname;
                                     } elseif ($contents->title) {
@@ -3266,7 +3266,7 @@ function questionnaire_response_key_cmp($l, $r) {
     return ($lc > $rc) ? 1 : -1;
 }
 
-    function check_date ($thisdate, $insert=false) {
+    function questionnaire_check_date ($thisdate, $insert=false) {
         $dateformat = get_string('strfdate', 'questionnaire');
         if (preg_match('/(%[mdyY])(.+)(%[mdyY])(.+)(%[mdyY])/', $dateformat, $matches)) {
             $date_pieces = explode($matches[2], $thisdate);
@@ -3394,7 +3394,7 @@ function questionnaire_response_key_cmp($l, $r) {
         break;
     }
 
-    function choice_values($content) {
+    function questionnaire_choice_values($content) {
 
         /// If we run the content through format_text first, any filters we want to use (e.g. multilanguage) should work.
         // examines the content of a possible answer from radio button, check boxes or rate question
@@ -3447,7 +3447,7 @@ function questionnaire_response_key_cmp($l, $r) {
     }
 
     // // DEV JR skip logic feature :: we need to find out how many questions will actually be displayed on next page/section
-    function nb_questions_on_page ($questionsinquestionnaire, $questionsinsection, $rid) {
+    function questionnaire_nb_questions_on_page ($questionsinquestionnaire, $questionsinsection, $rid) {
         global $DB;
         $nbqonpage = 0;
 
@@ -3466,7 +3466,7 @@ function questionnaire_response_key_cmp($l, $r) {
                         $question_dependchoice = $question->dependchoice;
                         $responsetable = 'resp_single';
                 }
-                $sql = 'SELECT * FROM mdl_questionnaire_'.$responsetable.' WHERE response_id = '.$rid.
+                $sql = 'SELECT * FROM {questionnaire}_'.$responsetable.' WHERE response_id = '.$rid.
                 ' AND question_id = '.$question->dependquestion.' AND choice_id = '.$question_dependchoice;
                 if ($DB->get_record_sql($sql)) {
                     $nbqonpage++;
@@ -3478,7 +3478,7 @@ function questionnaire_response_key_cmp($l, $r) {
         return $nbqonpage;
     }
 
-    function get_dependencies($questions, $position) {
+    function questionnaire_get_dependencies($questions, $position) {
         $dependencies = array();
         $dependencies[''][0] = get_string('choosedots');
 
@@ -3486,7 +3486,7 @@ function questionnaire_response_key_cmp($l, $r) {
             if (($question->type_id == QUESRADIO || $question->type_id == QUESDROP || $question->type_id == QUESYESNO) && $question->position < $position) {
     	        if (($question->type_id == QUESRADIO || $question->type_id == QUESDROP) && $question->name != '') {
     	            foreach ($question->choices as $key => $choice) {
-    	                $contents = choice_values($choice->content);
+    	                $contents = questionnaire_choice_values($choice->content);
     	                if ($contents->modname) {
     	                    $choice->content = $contents->modname;
     	                }
@@ -3502,7 +3502,7 @@ function questionnaire_response_key_cmp($l, $r) {
         return $dependencies;
     }
 
-    function check_dependencies ($sid) {
+    function questionnaire_check_dependencies ($sid) {
         global $DB;
         // we need to load freshly updated questions from current questionnaire
         $questions = $DB->get_records('questionnaire_question', array('survey_id' => $sid), 'id');

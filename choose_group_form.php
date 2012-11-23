@@ -67,10 +67,7 @@ class questionnaire_choose_group_form extends moodleform {
                 } else {
                     $respscount = 0;
                 }
-                // do not display group with no responses
-                if ($respscount != 0) {
-                    $groups_options[$group->id] = get_string('group').': '.$group->name.' ('.$respscount.')';
-                }
+                $groups_options[$group->id] = get_string('group').': '.$group->name.' ('.$respscount.')';
             }
             if ($canviewallgroups) {
                 $groups_options['-2'] = '---'.get_string('membersofselectedgroup','group').' '.get_string('allgroups').'---';

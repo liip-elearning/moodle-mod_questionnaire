@@ -255,13 +255,13 @@ class questionnaire_question {
     function insert_response_date($rid) {
         global $DB;
         $val = optional_param('q'.$this->id, '', PARAM_CLEAN);
-        $checkdateresult = check_date($val);
+        $checkdateresult = questionnaire_check_date($val);
         $thisdate = $val;
         if (substr($checkdateresult,0,5) == 'wrong') {
             return false;
         }
         // now use ISO date formatting
-        $checkdateresult = check_date($thisdate, $insert=true);
+        $checkdateresult = questionnaire_check_date($thisdate, $insert=true);
         $record = new Object();
         $record->response_id = $rid;
         $record->question_id = $this->id;
@@ -736,7 +736,7 @@ class questionnaire_question {
                     $textidx = $content;
                     $this->counts[$textidx] = !empty($this->counts[$textidx]) ? ($this->counts[$textidx] + 1) : 1;
                 } else {
-                    $contents = choice_values($row->content);
+                    $contents = questionnaire_choice_values($row->content);
                     $this->choice = $contents->text.$contents->image;
                     $textidx = $this->choice;
                     $this->counts[$textidx] = !empty($this->counts[$textidx]) ? ($this->counts[$textidx] + 1) : 1;
@@ -765,7 +765,7 @@ class questionnaire_question {
                     $textidx = $content;
                     $this->counts[$textidx] = !empty($this->counts[$textidx]) ? ($this->counts[$textidx] + 1) : 1;
                 } else {
-                    $contents = choice_values($row->content);
+                    $contents = questionnaire_choice_values($row->content);
                     $this->choice = $contents->text.$contents->image;
                     $textidx = $this->choice;
                     $this->counts[$textidx] = !empty($this->counts[$textidx]) ? ($this->counts[$textidx] + 1) : 1;
@@ -1038,7 +1038,7 @@ class questionnaire_question {
                 }
                 $content = $choice->content;
                 $valign = 'top';
-                $contents = choice_values($choice->content);
+                $contents = questionnaire_choice_values($choice->content);
                 if ($contents->image != '') {
                      $valign = 'baseline';
                 }
@@ -1176,7 +1176,7 @@ class questionnaire_question {
 
             $other = strpos($choice->content, '!other');
             if ($other !== 0)  { // this is a normal check box
-                $contents = choice_values($choice->content);
+                $contents = questionnaire_choice_values($choice->content);
                 echo html_writer::checkbox('q'.$this->id.'[]', $id, in_array($id, $data->{'q'.$this->id}),
                                            format_text($contents->text, FORMAT_HTML).$contents->image);
                 echo '<br />';
@@ -1258,7 +1258,7 @@ class questionnaire_question {
                 $nameddegrees++;
             }
             else {
-                $contents = choice_values($content);
+                $contents = questionnaire_choice_values($content);
                 if ($contents->modname) {
                     $choice->content = $contents->text;
                 }
@@ -1368,7 +1368,7 @@ class questionnaire_question {
         $date_mess .= html_writer::end_tag('div');
                 if (!empty($data->{'q'.$this->id})) {
             $dateentered = $data->{'q'.$this->id};
-            $setdate = check_date ($dateentered, false);
+            $setdate = questionnaire_check_date ($dateentered, false);
             if ($setdate == 'wrongdateformat') {
                 $msg = get_string('wrongdateformat', 'questionnaire', $dateentered);
                 questionnaire_notify($msg);
@@ -1507,7 +1507,7 @@ class questionnaire_question {
         echo '<div class="response radio">';
         foreach ($this->choices as $id => $choice) {
             if (strpos($choice->content, '!other') !== 0) {
-                $contents = choice_values($choice->content);
+                $contents = questionnaire_choice_values($choice->content);
                 $choice->content = $contents->text.$contents->image;
                 if ($id == $checked) {
                     echo '<span class="selected">'.
@@ -1552,7 +1552,7 @@ class questionnaire_question {
         echo '<div class="response check">';
         foreach ($this->choices as $id => $choice) {
             if (strpos($choice->content, '!other') !== 0) {
-                $contents = choice_values($choice->content);
+                $contents = questionnaire_choice_values($choice->content);
                 $choice->content = $contents->text.$contents->image;
 
                 if (in_array($id, $data->{'q'.$this->id})) {
@@ -1594,7 +1594,7 @@ class questionnaire_question {
 
         $options = array();
         foreach ($this->choices as $id => $choice) {
-            $contents = choice_values($choice->content);
+            $contents = questionnaire_choice_values($choice->content);
             $options[$id] = format_text($contents->text, FORMAT_HTML);
         }
         echo '<div class="response drop">';
@@ -1660,7 +1660,7 @@ class questionnaire_question {
                 $str = 'q'."{$this->id}_$cid";
                 echo '<tr>';
                 $content = $choice->content;
-                $contents = choice_values($content);
+                $contents = questionnaire_choice_values($content);
                 if ($contents->modname) {
                     $content = $contents->text;
                 }
@@ -2100,7 +2100,7 @@ class questionnaire_question {
                     if ($osgood) {
                         list($content, $contentright) = preg_split('/[|]/', $content);
                     } else {
-                        $contents = choice_values($content);
+                        $contents = questionnaire_choice_values($content);
                         if ($contents->modname) {
                             $content = $contents->text;
                         }
@@ -2234,7 +2234,7 @@ class questionnaire_question {
                 $nameddegrees++;
             }
             else {
-                $contents = choice_values($content);
+                $contents = questionnaire_choice_values($content);
                 if ($contents->modname) {
                     $choice->content = $contents->text;
                 }
@@ -2296,7 +2296,7 @@ class questionnaire_question {
                     echo '<td style="text-align:right;">'.format_text($content, FORMAT_HTML).'&nbsp;</td>';
                 } else {
                     // eliminate potentially short-named choices
-                    $contents = choice_values($content);
+                    $contents = questionnaire_choice_values($content);
                     if ($contents->modname) {
                         $content = $contents->text;
                     }

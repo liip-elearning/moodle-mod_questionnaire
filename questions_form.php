@@ -134,7 +134,7 @@ class questionnaire_questions_form extends moodleform {
                         case QUESDROP:
                             $dependchoice = $DB->get_record('questionnaire_quest_choice', array('id' => $question->dependchoice), $fields='content');
                             $dependchoice = $dependchoice->content;
-                            $contents = choice_values($dependchoice);
+                            $contents = questionnaire_choice_values($dependchoice);
                             if ($contents->modname) {
                                 $dependchoice = $contents->modname;
                             }
@@ -458,7 +458,7 @@ class questionnaire_edit_question_form extends moodleform {
 
         /// Dependence fields:
         $position = isset($question->position) ? $question->position : count($questionnaire->questions) + 1;  
-        $dependencies = get_dependencies($questionnaire->questions, $position);
+        $dependencies = questionnaire_get_dependencies($questionnaire->questions, $position);
         if (count($dependencies) > 1) {
             $question->dependquestion = isset($question->dependquestion) ? $question->dependquestion.','.$question->dependchoice : '0,0';
             $group = array($mform->createElement('selectgroups', 'dependquestion', '', $dependencies) );

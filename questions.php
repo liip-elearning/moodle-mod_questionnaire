@@ -113,7 +113,7 @@
                         $DB->set_field('questionnaire_question', 'position', $record->position-1, array('id' => $record->id));
                     }
                 }
-                check_dependencies ($questionnaire->id);
+                questionnaire_check_dependencies ($questionnaire->id);
                 $reload = true;
             } else if (isset($qformdata->editbutton)) {
                 /// Switch to edit question screen.
@@ -153,7 +153,7 @@
                           array('survey_id' => $questionnaire->sid, 'position' => ($questionnaire->questions[$qid]->position-1)));
                 $DB->set_field('questionnaire_question', 'position', ($questionnaire->questions[$qid]->position-1),
                           array('id' => $qid));
-                check_dependencies ($questionnaire->id); // JR skip logic feature
+                questionnaire_check_dependencies ($questionnaire->id); // JR skip logic feature
                 /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...                
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
@@ -167,7 +167,7 @@
                 $DB->set_field('questionnaire_question', 'position', ($questionnaire->questions[$qid]->position+1),
                                array('id' => $qid));
 
-                check_dependencies ($questionnaire->id); // JR skip logic feature
+                questionnaire_check_dependencies ($questionnaire->id); // JR skip logic feature
                 /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
@@ -181,7 +181,7 @@
             /// value in the <input> tag.
                 $qpos = key($qformdata->moveherebutton);
                 $questionnaire->move_question($qformdata->moveq, $qpos);
-                check_dependencies ($questionnaire->id);
+                questionnaire_check_dependencies ($questionnaire->id);
                 /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
@@ -226,7 +226,7 @@
                         $curpos++;
                     }
                 }
-                check_dependencies ($questionnaire->id);
+                questionnaire_check_dependencies ($questionnaire->id);
                 /// Nothing I do will seem to reload the form with new data, except for moving away from the page, so...
                 redirect($CFG->wwwroot.'/mod/questionnaire/questions.php?id='.$questionnaire->cm->id);
                 $reload = true;
