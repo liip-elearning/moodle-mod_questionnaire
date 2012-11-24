@@ -17,7 +17,7 @@
 /// This page displays a non-completable instance of questionnaire
 
     require_once("../../config.php");
-    require_once('lib.php');
+    require_once($CFG->dirroot.'/mod/questionnaire/lib.php');
 
     $id     = optional_param('id', 0, PARAM_INT);
     $sid    = optional_param('sid', 0, PARAM_INT);
@@ -36,7 +36,7 @@
         if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance))) {
             print_error('invalidcoursemodule');
         }
-    /* } else {
+    } else {
         if (! $survey = $DB->get_record("questionnaire_survey", array("id" => $sid))) {
             print_error('surveynotexists', 'questionnaire');
         }
@@ -55,7 +55,7 @@
             $cm = get_coursemodule_from_instance('questionnaire', $qid, $course->id);
         } else {
             $cm = false;
-        } */
+        }
     }
 
 /// Check login and get context.
@@ -86,6 +86,7 @@
         print_error('nopermissions', 'questionnaire', $CFG->wwwroot.'/mod/questionnaire/view.php?id='.$cm->id);
     }
 
+    $SESSION->questionnaire->current_tab = new stdClass();
     $SESSION->questionnaire->current_tab = 'preview';
 
     $qp = get_string('preview_questionnaire', 'questionnaire');
