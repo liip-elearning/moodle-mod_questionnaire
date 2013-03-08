@@ -353,7 +353,6 @@
         echo $OUTPUT->confirm($confirmdelstr,
                 $CFG->wwwroot.'/mod/questionnaire/report.php?action=dvallresp&amp;sid='.$sid.'&amp;instance='.$instance,
                 $CFG->wwwroot.'/mod/questionnaire/report.php?action=vall&amp;sid='.$sid.'&amp;instance='.$instance);
-        echo '</div>';
     /// Finish the page
         echo $OUTPUT->footer($course);
         break;
@@ -579,6 +578,7 @@
     case 'vall': // view all responses
     case 'vallasort': // view all responses sorted in ascending order
     case 'vallarsort': // view all responses sorted in descending order
+        require_capability('mod/questionnaire:readallresponseanytime', $context);
         $PAGE->set_title(get_string('questionnairereport', 'questionnaire'));
         $PAGE->set_heading(format_string($course->fullname));
         $PAGE->navbar->add(get_string('questionnairereport', 'questionnaire'));
